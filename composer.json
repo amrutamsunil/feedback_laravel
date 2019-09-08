@@ -11,7 +11,10 @@
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.0",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "dompdf/dompdf": "^0.8.2",
+        "ext-mysqli": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^1.4",
@@ -44,6 +47,7 @@
             "Tests\\": "tests/"
         }
     },
+
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
@@ -58,4 +62,5 @@
             "@php artisan key:generate --ansi"
         ]
     }
+
 }
