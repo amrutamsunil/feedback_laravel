@@ -17,4 +17,6 @@ Route::get('/', function () {
 
 Route::group(['prefix'=>'user','as'=>'user.'],function(){
     Route::get('/dashboard','UserController@dashboard')->name('dashboard');
+    Route::get('/login','UserController@login')->name('login');
+
 });

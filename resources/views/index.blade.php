@@ -53,7 +53,7 @@ asset('dbconfig.php');
                 <li class="menu-active">
                 <li class="menu-has-children"><a href="#">LOGIN</a>
                     <ul>
-                        <li><a href="user">STUDENT</a></li>
+                        <li><a href="{{Route('user.login')}}">STUDENT</a></li>
                         <li><a href="principal">DIRECTOR</a></li>
                         <li><a href="principal">PRINCIPAL</a></li>
                         <li><a href="admin">HOD</a></li>
