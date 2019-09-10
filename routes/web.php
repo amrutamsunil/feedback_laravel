@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['prefix'=>'user','as'=>'user.'],function(){
+    Route::get('/dashboard','UserController@dashboard')->name('dashboard');
+});
