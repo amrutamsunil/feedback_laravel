@@ -15,14 +15,14 @@ class Faculty extends Migration
     {
         Schema::create('faculties', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->String('employee_no');
+            $table->bigInteger('department_id')->unsigned();
+            $table->String('employee_number');
             $table->String('name');
             $table->String('password');
-            $table->bigInteger('dept_id')->unsigned();
             $table->timestamps();
         });
         Schema::table('faculties',function(Blueprint $table){
-            $table->foreign('dept_id')->references('id')->on('departments');
+            $table->foreign('department_id')->references('id')->on('departments');
         });
     }
 

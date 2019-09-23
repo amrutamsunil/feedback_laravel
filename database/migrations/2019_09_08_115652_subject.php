@@ -16,7 +16,7 @@ class Subject extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->String('name');
-            $table->char('subject_type');
+            $table->char('type');
             $table->String('short')->nullable();
             $table->timestamps();
         });

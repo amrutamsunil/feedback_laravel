@@ -16,8 +16,8 @@ class SubjectAllocation extends Migration
         Schema::create('subject_allocations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('class_id')->unsigned();
-            $table->bigInteger('faculty_id')->unsigned();
             $table->bigInteger('subject_id')->unsigned();
+            $table->bigInteger('faculty_id')->unsigned();
             $table->timestamps();
         });
         Schema::table('subject_allocations',function(Blueprint $table){

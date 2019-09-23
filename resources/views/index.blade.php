@@ -1,7 +1,3 @@
-<?php
-session_start();
-asset('dbconfig.php');
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,7 +49,7 @@ asset('dbconfig.php');
                 <li class="menu-active">
                 <li class="menu-has-children"><a href="#">LOGIN</a>
                     <ul>
-                        <li><a href="{{Route('user.login')}}">STUDENT</a></li>
+                        <li><a href="{{Route('user.loginPage')}}">STUDENT</a></li>
                         <li><a href="principal">DIRECTOR</a></li>
                         <li><a href="principal">PRINCIPAL</a></li>
                         <li><a href="admin">HOD</a></li>

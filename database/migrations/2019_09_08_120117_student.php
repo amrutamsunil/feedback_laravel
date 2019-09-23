@@ -16,7 +16,7 @@ class Student extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('class_id')->unsigned();
-            $table->String('reg_no');
+            $table->String('student_reg');
             $table->String('name');
             $table->String('password');
             $table->timestamps();

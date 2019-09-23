@@ -42,7 +42,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand">Hello <?php echo $user_data['name'];?></a>
+                <a class="navbar-brand">Hello{{auth()->user()->name}}</a>
 
             </div>
             <div id="navbar" class="navbar-collapse collapse">

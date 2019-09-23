@@ -9,12 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "ext-json": "*",
+        "ext-mysqli": "*",
+        "dompdf/dompdf": "^0.8.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
-        "dompdf/dompdf": "^0.8.2",
-        "ext-mysqli": "*",
-        "ext-json": "*"
+        "laravel/ui": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

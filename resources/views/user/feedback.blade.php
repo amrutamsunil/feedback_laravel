@@ -1,23 +1,19 @@
-<?php
-include ('../dbconfig.php');
-if(isset($_SESSION['phase'])){
-    $phase=$_SESSION['phase'];
-}
-if(isset($_SESSION['user'])){
-    $user=$_SESSION['user'];
-}
-?>
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
     <link href="{{asset('img/miet.png')}}" rel="icon">
     <title>FEEDBACK FORM</title>
     <link rel="stylesheet" href="{{asset('css/font-awesome.min.css')}}">
+
     <!--<link href="../css/star-rating.css" media="all" rel="stylesheet" type="text/css"/>
     <!--suppress JSUnresolvedLibraryURL -->
-    <script src="{{asset('js/vendor/jquery-2.1.4.min.js')}}"></script>
-   <!-- <script src="../js/star-rating.js" type="text/javascript"></script>-->
+    <script src="{{asset('js/jquery.min.js')}}"></script>
+    <script src="{{asset('js/toastr.min.js')}}"></script>
+    <script src="{{asset('js/jquery_form.js')}}"></script>
+
+    <!-- <script src="../js/star-rating.js" type="text/javascript"></script>-->
     <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('vendor/css/nav.css')}}" rel="stylesheet">
     <style>
@@ -52,7 +48,13 @@ if(isset($_SESSION['user'])){
             <div class="col-md-2"><label for="subsel" style="padding-left: 30%; font-size: 20px;font-family: Rockwell">Select Subject </label></div>
             <div class="col-md-8">
                 <select name="subsel" id="subsel" class="form-control">
-                    <?php echo $user_class->fill_subjects($user_data,$phase); ?>
+                    @foreach($feedback_obj->subjects as $subject)
+                    @if($subject->flag=="Green")
+                        <option style='background-color:#00FA9A;color:black;' value={{$subject->id."-".$subject->flag."-".$subject->type}}>{{$subject->short}} - {{$subject->faculty_name}}</option>";
+                        @else
+                            <option style='background-color:#FF9999;color:black;' value={{$subject->id."-".$subject->flag."-".$subject->type}}>{{$subject->short}} - {{$subject->faculty_name}}</option>";
+                        @endif
+                    @endforeach
                 </select></div>
         </div>
 </fieldset><br/>
@@ -73,7 +75,7 @@ if(isset($_SESSION['user'])){
 
         </div>
     </form>
-
+<textarea id="now" cols="40" rows="10"></textarea>
 <?php
 extract($_POST);
 
@@ -104,6 +106,9 @@ if(isset($ok)) {
     }
 }
 ?>
+</body>
+<link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
+
 <script type="text/javascript">
     $('input').on('change',
      function() {
@@ -114,28 +119,34 @@ if(isset($ok)) {
 
      });
 
-            $('#subsel').on('change',function () {
-                var subj_id=$(this).val();
-                var p="<?php echo $phase;?>";
-                var u="<?php echo $user;?>";
+           $('#subsel').on('change',function () {
+               var subj_id = $(this).val();
+               var ar = subj_id.split("-");
+               var subject_id = ar[0];
+               var flag = ar[1];
+               var subject_type = ar[2];
+               if (flag == "Green") {
+                   toastr.success("Already Submitted");
+               } else {
+               $("#now").html("subject_id:" + subject_id + "  flag:" + ar[1] + "  type:" + ar[2]);
+               if (subj_id) {
+                   $.ajax({
+                       type: 'POST',
+                       url: '/ajax_questions',
+                       data: {subject_id: subject_id, flag: flag, subject_type: subject_type,
+                           "_token": "{{ csrf_token() }}"},
+                       success: function (response) {
+                           if (response) {
+                               $("#questions").html(response);
 
-                if(subj_id){
-                    $.ajax({
-                        type:'POST',
-                        url:'ajax_subj_status.php',
-                        data:{subjsel:subj_id,phase:p,user:u},
-                        success:function (response) {
-                            if(response){
-                            $("#questions").html(response);
-
-                            }
-                        }
-                    });
-                }
+                           }
+                       }
+                   });
+               }
+           }
 
             });
 
 
 </script>
-</body>
 </html>

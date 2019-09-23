@@ -15,16 +15,16 @@ class classes extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('department_id')->unsigned();
             $table->String('name');
-            $table->integer('semester');
-            $table->String('section');
+            $table->integer('sem');
+            $table->String('sec');
             $table->integer('batch');
             $table->tinyInteger('isActive');
-            $table->bigInteger('dept_id')->unsigned();
             $table->timestamps();
         });
         Schema::table('classes',function (Blueprint $table){
-            $table->foreign('dept_id')->references('id')->on('departments');
+            $table->foreign('department_id')->references('id')->on('departments');
         });
     }
 

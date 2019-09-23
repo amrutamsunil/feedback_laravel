@@ -1,39 +1,5 @@
-@extends('layouts.user_nav.')
-<?php
-session_start();
-include('../dbconfig.php');
-include ('User_Class.php');
-$user= $_SESSION['user'];
-if($user=="")
-{header('location:../index.php');}
-$user_class=new user_ns\User_Class($conn);
-$user_data=$user_class->fetch_user($user);
-?>
 
-<?php
-@$page= $_GET['page'];
-if($page=="phase1"||$page=="phase2") {
-    if ($page == "phase1") {
-        $_SESSION['phase'] = 1;
-        include('feedback.php');
-    } elseif ($page == "phase2") {
-        $_SESSION['phase'] = 2;
-        include('feedback.php');
-    }
-}
-else
-{
-
-?>
-
-   <?php
-   if ($page == "change_password") {
-       echo "<br/><br/><br/><br/>";
-
-       include('change_password.php');
-   }
-   else {
-       ?>
+@extends('layouts.user_nav')
        <!-- End menu -->
 @section('content')
        <!-- Start Slider -->
@@ -48,7 +14,7 @@ else
                    </figure>
                </div>
                <div class="mu-slider-content">
-                   <h2 style="text-shadow: 2px 4px 6px black; font-size: ">SELECT PHASE</h2>
+                   <h2 style="text-shadow: 2px 4px 6px black;">SELECT PHASE</h2>
                </div>
            </div>
 
@@ -59,7 +25,7 @@ else
                    <div class="col-lg-12 col-md-12">
                        <div class="mu-service-area">
                            <div class="mu-service-single">
-                               <a href="dashboard.php?page=phase1">
+                               <a href="{{Route('user.phase',["1"])}}">
                                    <button class="button">PHASE 1</button>
                                </a>
                                <h2 style="color: black">SEM INITIAL</h2>
@@ -71,7 +37,7 @@ else
                            </div>
 
                            <div class="mu-service-single">
-                               <a href="dashboard.php?page=phase2">
+                               <a href="{{Route('user.phase',["2"])}}">
                                    <button class="button">PHASE 2</button>
                                </a>
                                <h2 style="color: black">SEM FINAL</h2>
@@ -112,9 +78,5 @@ and they need to know that their feedback provides some value.</b></h6>
            <div class="col-md-6">
                <img src="{{asset('vendor/student_dashboard/assets/img/rawpixel-651333-unsplash.jpg')}}" height="761px" width="100%"/>
            </div>
-       </div>
 @endsection
-       <?php
-   }
-        }
-        ?>
+

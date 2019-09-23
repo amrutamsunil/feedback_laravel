@@ -13,14 +13,14 @@ class Admin extends Migration
      */
     public function up()
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('admin', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->String('username');
+            $table->String('name');
             $table->String('password');
             $table->bigInteger('dept_id')->unsigned();
             $table->timestamps();
         });
-        Schema::table('admins',function (Blueprint $table){
+        Schema::table('admin',function (Blueprint $table){
             $table->foreign('dept_id')->references('id')->on('departments');
         });
     }
