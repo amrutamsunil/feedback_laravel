@@ -10,4 +10,7 @@ class Faculty extends Model
     protected $fillable=[
         'employee_no','name','password','dept_id'
     ];
+    public function subject_allocations(){
+       return $this->hasMany('App\Subject_Alloc','faculty_id');
+    }
 }

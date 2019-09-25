@@ -1,31 +1,17 @@
-@extends('layouts.login_template.')
-<?php
-extract($_POST);
-include('dbconfig.php');
-include('Admin_Class.php');
-$login_obj= new admin_ns\Admin_Class($conn);
-session_start();
-if(isset($save))
-{
-    $err="";
-    $username=$conn->real_escape_string($uname);
-    $password=$conn->real_escape_string($pass);
-    $err=$login_obj->LoginCheck($username,$password,$err);
+@extends('layouts.login_template')
 
-}
-
-?>
 @section('content')
 <div class="limiter" >
     <div class="container-login100">
         <div class="wrap-login100 p-l-50 p-r-50 p-t-77 p-b-30">
-            <form class="login100-form validate-form" method="post">
+            <form class="login100-form validate-form" method="post" action="{{Route('hod.login')}}">
+                @csrf
 					<span class="login100-form-title p-b-55">
 						Login
 					</span>
 
                 <div class="wrap-input100" >
-                    <input class="input100" type="text" name="uname" placeholder="username" required>
+                    <input class="input100" type="text" name="username" placeholder="username" required>
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
 							<span class="lnr lnr-envelope"></span>
@@ -33,7 +19,7 @@ if(isset($save))
                 </div>
 
                 <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-                    <input class="input100" type="password" name="pass" placeholder="Password" required>
+                    <input class="input100" type="password" name="password" placeholder="Password" required>
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
 							<span class="lnr lnr-lock"></span>
@@ -45,13 +31,6 @@ if(isset($save))
                         Login
                     </button>
                 </div>
-
-                <div><center>
-                        <?php
-                        echo "<font color='red'>".@$err."</font>";
-                        ?></center>
-                </div>
-
             </form>
         </div>
     </div>

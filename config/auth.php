@@ -46,6 +46,10 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'hod'=>[
+            'driver'=>'session',
+            'provider'=>'hods'
+        ],
         'student'=>[
             'driver'=>'session',
             'provider'=>'students'
@@ -74,6 +78,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+        ],
+        'hods'=>[
+            'driver'=>'eloquent',
+            'model'=>App\Admin::class,
         ],
         'students'=>[
             'driver'=>'eloquent',

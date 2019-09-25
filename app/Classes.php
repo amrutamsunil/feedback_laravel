@@ -17,10 +17,15 @@ class Classes extends Model
         return $this->belongsToMany('App\Faculty','subject_allocations','class_id','faculty_id')->withPivot('subject_id','id');
     }
     public function students(){
-        return $this->belongsTo('App\User','class_id');
+        return $this->hasMany('App\User','class_id');
     }
      public function isActive(){
         return $this->where('isActive','=',1)->get('id');
     }
-
+    public function subject_allocations(){
+        return $this->hasMany('App\Subject_Alloc','class_id');
+    }
+    public function isActiveLists($dept_id){
+        return $this->where('isActive','=',1)->where('department_id','=',$dept_id)->get();
+    }
 }

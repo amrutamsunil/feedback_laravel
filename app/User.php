@@ -29,7 +29,7 @@ class User extends Authenticatable
         'password'
     ];
     public function classes(){
-        return $this->hasMany('App\Classes','class_id');
+        return $this->belongsTo('App\Classes','class_id');
     }
     public function isActive(){
         return $this->hasOne('App\Classes','class_id')->where('isActive','=','1');

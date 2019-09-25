@@ -2,7 +2,7 @@
 <link href="{{asset('css/star-rating.css')}}" media="all" rel="stylesheet" type="text/css"/>
 <!--suppress JSUnresolvedLibraryURL -->
 <script src="{{asset('js/vendor/jquery-2.1.4.min.js')}}"></script>
-<script src="{{asset('ajax_subj_status.blade.php')}}" type="text/javascript"></script>
+<script src="{{asset('js/star-rating.js')}}" type="text/javascript"></script>
 <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
 <link href="{{asset('vendor/css/nav.css')}}" rel="stylesheet">
 <style>

@@ -52,7 +52,7 @@
                         <li><a href="{{Route('user.loginPage')}}">STUDENT</a></li>
                         <li><a href="principal">DIRECTOR</a></li>
                         <li><a href="principal">PRINCIPAL</a></li>
-                        <li><a href="admin">HOD</a></li>
+                        <li><a href="{{Route('hod.loginPage')}}">HOD</a></li>
                         <li><a href="faculty">FACULTY</a></li>
                         <li><a href="developer">DEVELOPER</a></li>
                     </ul>

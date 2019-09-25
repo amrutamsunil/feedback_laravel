@@ -2,6 +2,7 @@
     <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8"/>
     <link href="{{asset('img/miet.png')}}" rel="icon">
     <title>FEEDBACK FORM</title>
@@ -38,21 +39,24 @@
 <div class="navbar_miet float-left ">
     <a href="dashboard.php"><i class="fa fa-home" aria-hidden="true"></i> HOME </a>
     <div class="subnav_miet" style="float: right">
-            <a href="logout.php"><i class="fa fa-sign-out" aria-hidden="true"></i>SignOut</a>
+            <a href="{{Route('user.logout')}}"><i class="fa fa-sign-out" aria-hidden="true"></i>SignOut</a>
         </div>
 </div>
     <br>
-    <form method="post" >
+    <form method="post" action="{{Route('user.submit_feedback')}}">
 <fieldset>
+    @csrf
         <div class="row row d-flex p-3 bg-secondary">
             <div class="col-md-2"><label for="subsel" style="padding-left: 30%; font-size: 20px;font-family: Rockwell">Select Subject </label></div>
             <div class="col-md-8">
                 <select name="subsel" id="subsel" class="form-control">
-                    @foreach($feedback_obj->subjects as $subject)
+                    <option value="0">Select Any Subject</option>
+
+                @foreach($feedback_obj->subjects as $subject)
                     @if($subject->flag=="Green")
-                        <option style='background-color:#00FA9A;color:black;' value={{$subject->id."-".$subject->flag."-".$subject->type}}>{{$subject->short}} - {{$subject->faculty_name}}</option>";
+                        <option style='background-color:#00FA9A;color:black;' value={{$subject->pivot->id."-".$subject->flag."-".$subject->type."-".$subject->short}}>{{$subject->short}} - {{$subject->faculty_name}}</option>";
                         @else
-                            <option style='background-color:#FF9999;color:black;' value={{$subject->id."-".$subject->flag."-".$subject->type}}>{{$subject->short}} - {{$subject->faculty_name}}</option>";
+                            <option style='background-color:#FF9999;color:black;' value={{$subject->pivot->id."-".$subject->flag."-".$subject->type."-".$subject->short}}>{{$subject->short}} - {{$subject->faculty_name}}</option>";
                         @endif
                     @endforeach
                 </select></div>
@@ -71,41 +75,11 @@
             </table>
             </div>
         <br/><br/>
+
         <div class="container" id="questions">
 
         </div>
     </form>
-<textarea id="now" cols="40" rows="10"></textarea>
-<?php
-extract($_POST);
-
-if(isset($ok)) {
-    if ($ok == "") {
-        echo "
-        <script>
-        alert('Select any Subject!!');
-        </script>
-        ";
-    } else {
-        $check = '';
-        $subsel = $_POST['subsel'];
-        $q1 = (int)$_POST['q1'];
-        $q2 = (int)$_POST['q2'];
-        $q3 = (int)$_POST['q3'];
-        $q4 = (int)$_POST['q4'];
-        $q5 = (int)$_POST['q5'];
-        $q6 = (int)$_POST['q6'];
-        $q7 = (int)$_POST['q7'];
-        $q8 = (int)$_POST['q8'];
-        $q9 = (int)$_POST['q9'];
-        $q10 = (int)$_POST['q10'];
-        $ratings = [$q1, $q2, $q3, $q4, $q5, $q6, $q7, $q8, $q9, $q10];
-        $check = $user_class->submit_feedback($subsel, $user_data, $check, $ratings, $phase);
-        echo "<script type='text/javascript'>alert('$check');</script>";
-        echo "<meta http-equiv='refresh' content='0'>";
-    }
-}
-?>
 </body>
 <link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
 
@@ -118,35 +92,67 @@ if(isset($ok)) {
          }
 
      });
+    $(document).ready(function () {
+        toastr.warning("Select Any Subject!!");
+    });
 
            $('#subsel').on('change',function () {
                var subj_id = $(this).val();
+                if(subj_id==="0"){
+                    alert("Hello");
+                    toastr.error('Select Any Subject!!');
+                }else{
                var ar = subj_id.split("-");
-               var subject_id = ar[0];
+               var subject_alloc_id = ar[0];
                var flag = ar[1];
                var subject_type = ar[2];
+               var subject_short=ar[3];
                if (flag == "Green") {
                    toastr.success("Already Submitted");
                } else {
-               $("#now").html("subject_id:" + subject_id + "  flag:" + ar[1] + "  type:" + ar[2]);
-               if (subj_id) {
-                   $.ajax({
-                       type: 'POST',
-                       url: '/ajax_questions',
-                       data: {subject_id: subject_id, flag: flag, subject_type: subject_type,
-                           "_token": "{{ csrf_token() }}"},
-                       success: function (response) {
-                           if (response) {
-                               $("#questions").html(response);
+                   toastr.info("You Have Selected "+subject_short);
+                   if (subj_id) {
+                       $.ajax({
+                           type: 'POST',
+                           url: 'user/ajax_questions',
+                           data: {
+                               sa_id: subject_alloc_id, flag: flag, subject_type: subject_type,
+                               "_token": "{{ csrf_token() }}"
+                           },
+                           success: function (response) {
+                               if (response) {
+                                   $("#questions").html(response);
 
+                               }
                            }
-                       }
-                   });
+                       });
+                   }
                }
            }
-
             });
 
 
+</script>
+<script type='text/javascript'>
+    toastr.options.closeDuration = 200;
+    toastr.options.closeEasing = 'swing';
+    toastr.options.showMethod = 'slideDown';
+    toastr.options.hideMethod = 'slideUp';
+    //toastr.options.closeMethod = 'slideUp';
+    toastr.options.newestOnTop = false;
+    toastr.options.preventDuplicates = true;
+    toastr.options.extendedTimeOut = 60;
+    //toastr.options.progressBar = true;
+    toastr.options.positionClass='toast-top-center';
+    @foreach ($errors->all() as $error)
+    toastr.error("{{$error}}");
+    @endforeach
+    @if(Session::has('success'))
+    toastr.success("{{Session::get('success')}}");
+    @elseif(Session::has('Error'))
+    toastr.error("{{Session::get('error')}}");
+    @elseif(Session::has('info'))
+    toastr.info("{{Session::get('info')}}");
+    @endif
 </script>
 </html>

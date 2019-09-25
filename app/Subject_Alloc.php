@@ -12,5 +12,10 @@ class Subject_Alloc extends Model
     ];
     public $incrementing = true;
 
-
+    public function faculty(){
+        return $this->belongsTo('App\Faculty','faculty_id');
+    }
+    public function class(){
+        return $this->belongsTo('App\Classes','class_id');
+    }
 }
