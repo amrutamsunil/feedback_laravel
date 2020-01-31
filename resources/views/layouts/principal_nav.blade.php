@@ -60,8 +60,8 @@
             <a href="{{Route('principal.faculty_wise_page')}}"><i class="fa fa-hand-o-right" aria-hidden="true"></i> Faculty-wise</a>
         </div>
     </div>
-    <a href="{{Route('principal.report_generator')}}"> REPORT GENERATOR </a>
-    <a href="{{Route('principal.classes_report')}}"> ALL CLASSES REPORT </a>
+    <a href="{{Route('principal.report_generator')}}"> FACULTY REPORT </a>
+    <a href="{{Route('principal.classes_report')}}"> CLASSES REPORT </a>
     <a href="{{Route('principal.test')}}"> TESTING </a>
 
     <div class="subnav_miet" style="float: right">

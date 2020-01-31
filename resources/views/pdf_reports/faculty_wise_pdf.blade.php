@@ -39,7 +39,7 @@
     <center><h6><b>M.I.E.T ENGINEERING COLLEGE</b></h6></center>
     <center><h6><b>STUDENT FEEDBACK ANALYSIS REPORT</b></h6></center>
     <center><h6><b>FACULTY REPORT</b></h6></center><br/>
-    <center><h6><b>DEPARTMENT OF {{$dept->short}}</b></h6></center><br/>
+    <center><h6><b>DEPARTMENT OF {{$dept->name}}</b></h6></center><br/>
 
 </div>
 <br/><br/>&nbsp;

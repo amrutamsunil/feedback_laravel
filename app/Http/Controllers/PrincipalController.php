@@ -15,12 +15,6 @@ class PrincipalController extends Controller
     public function __construct()
     {
         $this->middleware('auth:principal');
-        global $feedbacks,$departments,$classes,$students,$faculties;
-        $feedbacks=Feedback::all();
-        $faculties=Faculty::all();
-        $classes=Classes::all();
-        $students=User::all();
-        $departments=Department::all();
 
 
     }
@@ -29,9 +23,8 @@ class PrincipalController extends Controller
     }
     public function find_average($subjects,$phase){
         $avg=0;$temp=0;$tot=1;
-        $f=Feedback::all();
         foreach ($subjects as $index=>$subject){
-            $temp=$f->where('sa_id','=',$subject->id)->where('phase','=',$phase)->avg('sum');
+            $temp=Feedback::where('sa_id','=',$subject->id)->where('phase','=',$phase)->avg('sum');
             $avg+=$temp;
             $tot=$index+1;
         }
@@ -69,11 +62,11 @@ class PrincipalController extends Controller
         return response()->json($obj);
     }
     public function class_wise_page(){
-        global $departments;
+        $departments=Department::all();
         return view('principal.class_Wise_feedback')->with('departments',$departments);
     }
     public function faculty_wise_page(){
-        global $departments;
+        $departments=Department::all();
         return view('principal.faculty_Wise_feedback')->with('departments',$departments);
     }
     public function  pdf_faculty_wise_report(Request $request)
@@ -86,7 +79,7 @@ class PrincipalController extends Controller
         $class_obj = new Classes();
         $active_classes = $class_obj->isActive();
         //$classes=Classes::all();
-        global $classes, $students, $departments, $feedbacks;
+       // global $classes, $students, $departments, $feedbacks;
 
         //$students=User::all();
         //$departments=Department::all();
@@ -94,31 +87,31 @@ class PrincipalController extends Controller
         $faculties = Faculty::with(['subjects' => function ($query) use ($active_classes) {
             $query->whereIn('class_id', $active_classes);
         }])->where('id', '=', $request->faculty_id)->get();
-        $dept_name=$departments->where('id','=',$request->dept_select);
+        $dept_name=Department::where('id','=',$request->dept_select);
         $faculties[0]['department_name']=$dept_name->first()->name;
         foreach ($faculties[0]->subjects as &$f) {
-            $f['class'] = $classes->where('id', '=', $f->pivot->class_id)->first();
-            $dep_name = $departments->where('id', '=', $f->class->department_id)->first();
+            $f['class'] = Classes::where('id', '=', $f->pivot->class_id)->first();
+            $dep_name = Department::where('id', '=', $f->class->department_id)->first();
             $f['class']['department_name'] = $dep_name->short;
-            $student_count = $students->where('class_id', '=', $f->class->id)->count();
+            $student_count =User::where('class_id', '=', $f->class->id)->count();
             $f['class']['student_count'] = $student_count;
 
-            $p1_avg = $feedbacks->where('sa_id', '=', $f->pivot->id)
+            $p1_avg = Feedback::where('sa_id', '=', $f->pivot->id)
                 ->where('phase', '=', 1)
                 ->avg('sum');
             if ($p1_avg == NULL) $p1_avg = 0;
             $f['phase1_avg'] = round($p1_avg);
 
-            $p2_avg = $feedbacks->where('sa_id', '=', $f->pivot->id)
+            $p2_avg = Feedback::where('sa_id', '=', $f->pivot->id)
                 ->where('phase', '=', 2)
                 ->avg('sum');
             if ($p2_avg == NULL) $p2_avg = 0;
             $f['phase2_avg'] = round($p2_avg);
 
-            $s1_count = $feedbacks->where('sa_id', '=', $f->pivot->id)
+            $s1_count = Feedback::where('sa_id', '=', $f->pivot->id)
                 ->where('phase', '=', 1)->count();
             if ($s1_count == NULL) $s1_count = 0;
-            $s2_count = $feedbacks->where('sa_id', '=', $f->pivot->id)
+            $s2_count = Feedback::where('sa_id', '=', $f->pivot->id)
                 ->where('phase', '=', 2)->count();
             if ($s2_count == NULL) $s2_count = 0;
             $f['phase1_student_count'] = $s1_count;
@@ -134,7 +127,7 @@ class PrincipalController extends Controller
             'class_id'=>'required'
         ]);
         //  $feedbacks=Feedback::all();
-        global $feedbacks;
+        //global $feedbacks;
 
 
         $students=Classes::with('students')->where('id','=',$request->class_id)->get();
@@ -148,22 +141,22 @@ class PrincipalController extends Controller
             //$t['faculty'] = $subjects[0]->faculties[$index]->name;
             $t['faculty']=$subjects->first()->faculties->where('id','=',$t->pivot->faculty_id)->first();
 
-            $p1_avg=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $p1_avg=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',1)
                 ->avg('sum');
             if($p1_avg==NULL) $p1_avg=0;
             $t['phase1_avg']=round($p1_avg);
 
-            $p2_avg=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $p2_avg=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',2)
                 ->avg('sum');
             if($p2_avg==NULL) $p2_avg=0;
             $t['phase2_avg']=round($p2_avg);
 
-            $s1_count=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $s1_count=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',1)->count();
             if($s1_count==NULL) $s1_count=0;
-            $s2_count=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $s2_count=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',2)->count();
             if($s2_count==NULL) $s2_count=0;
             $t['phase1_student_count']=$s1_count;
@@ -218,7 +211,7 @@ class PrincipalController extends Controller
         $this->validate($request,[
             'class_id'=>'required'
         ]);
-        global $feedbacks;
+        //global $feedbacks;
         $students=Classes::with('students')->where('id','=',$request->class_id)->get();
         $students_count=$students[0]->students->count();
         $subjects=Classes::with(['subjects','faculties'])->where('id','=',$request->class_id)->get();
@@ -230,22 +223,22 @@ class PrincipalController extends Controller
             //$t['faculty'] = $subjects[0]->faculties[$index]->name;
             $t['faculty']=$subjects->first()->faculties->where('id','=',$t->pivot->faculty_id)->first();
 
-            $p1_avg=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $p1_avg=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',1)
                 ->avg('sum');
             if($p1_avg==NULL) $p1_avg=0;
             $t['phase1_avg']=round($p1_avg);
 
-            $p2_avg=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $p2_avg=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',2)
                 ->avg('sum');
             if($p2_avg==NULL) $p2_avg=0;
             $t['phase2_avg']=round($p2_avg);
 
-            $s1_count=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $s1_count=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',1)->count();
             if($s1_count==NULL) $s1_count=0;
-            $s2_count=$feedbacks->where('sa_id','=',$t->pivot->id)
+            $s2_count=Feedback::where('sa_id','=',$t->pivot->id)
                 ->where('phase','=',2)->count();
             if($s2_count==NULL) $s2_count=0;
             $t['phase1_student_count']=$s1_count;
@@ -275,8 +268,8 @@ class PrincipalController extends Controller
         ]);
 
         $obj=array();
-        global $faculties;
-        $faculty=$faculties->where('department_id','=',$request->dept);
+
+        $faculty=Faculty::where('department_id','=',$request->dept);
 
         foreach ($faculty as $f){
             $obj[$f->id]=$f->name;
@@ -291,7 +284,7 @@ class PrincipalController extends Controller
         $class_obj=new Classes();
         $active_classes=$class_obj->isActive();
         //$classes=Classes::all();
-        global $classes,$students,$departments,$feedbacks;
+       // global $classes,$students,$departments,$feedbacks;
         //$students=User::all();
         //$departments=Department::all();
 
@@ -300,28 +293,28 @@ class PrincipalController extends Controller
         }])->where('id','=',$request->faculty_id)->get();
 
         foreach ($faculties[0]->subjects as &$f ){
-            $f['class']=$classes->where('id','=',$f->pivot->class_id)->first();
-            $dep_name=$departments->where('id','=',$f->class->department_id)->first();
+            $f['class']=Classes::where('id','=',$f->pivot->class_id)->first();
+            $dep_name=Department::where('id','=',$f->class->department_id)->first();
             $f['class']['department_name']=$dep_name->short;
-            $student_count=$students->where('class_id','=',$f->class->id)->count();
+            $student_count=User::where('class_id','=',$f->class->id)->count();
             $f['class']['student_count']=$student_count;
 
-            $p1_avg=$feedbacks->where('sa_id','=',$f->pivot->id)
+            $p1_avg=Feedback::where('sa_id','=',$f->pivot->id)
                 ->where('phase','=',1)
                 ->avg('sum');
             if($p1_avg==NULL) $p1_avg=0;
             $f['phase1_avg']=round($p1_avg);
 
-            $p2_avg=$feedbacks->where('sa_id','=',$f->pivot->id)
+            $p2_avg=Feedback::where('sa_id','=',$f->pivot->id)
                 ->where('phase','=',2)
                 ->avg('sum');
             if($p2_avg==NULL) $p2_avg=0;
             $f['phase2_avg']=round($p2_avg);
 
-            $s1_count=$feedbacks->where('sa_id','=',$f->pivot->id)
+            $s1_count=Feedback::where('sa_id','=',$f->pivot->id)
                 ->where('phase','=',1)->count();
             if($s1_count==NULL) $s1_count=0;
-            $s2_count=$feedbacks->where('sa_id','=',$f->pivot->id)
+            $s2_count=Feedback::where('sa_id','=',$f->pivot->id)
                 ->where('phase','=',2)->count();
             if($s2_count==NULL) $s2_count=0;
             $f['phase1_student_count']=$s1_count;
@@ -372,7 +365,7 @@ class PrincipalController extends Controller
 
     }
 public function report_generator(){
-        global $departments;
+        $departments=Department::all();
         return view('principal.report_generator')->with('departments',$departments);
 }
 public function pdf_question_wise_report(Request $request){
@@ -383,7 +376,7 @@ public function pdf_question_wise_report(Request $request){
     $class_obj=new Classes();
     $active_classes=$class_obj->isActive();
     $dept=Department::where('id','=',$request->dept_select)->first();
-    global $classes,$departments,$students,$feedbacks;
+   // global $classes,$departments,$students,$feedbacks;
     $fs=Faculty::with(['subjects'=>function($query) use($active_classes) {
         $query->whereIn('class_id',$active_classes);
     }])->where('department_id','=',$request->dept_select)->get();
@@ -397,22 +390,22 @@ public function pdf_question_wise_report(Request $request){
         $obj[$index]['lab']['count']=$lab_count;
         foreach ($f->subjects as $i=>&$t) {
 
-            $t['class'] = $classes->where('id', '=', $t->pivot->class_id)->first();
-            $dep_name = $departments->where('id', '=', $t->class->department_id)->first();
+            $t['class'] = Classes::where('id', '=', $t->pivot->class_id)->first();
+            $dep_name = Department::where('id', '=', $t->class->department_id)->first();
             $t['class']['department_name'] = $dep_name->short;
-            $student_count = $students->where('class_id', '=', $t->class->id)->count();
+            $student_count = User::where('class_id', '=', $t->class->id)->count();
             $t['class']['student_count'] = $student_count;
 
-            $p1_avg = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $p1_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 1)
                 ->avg('sum');
             $p1_q=array();
             $p2_q=array();
             for($g=1;$g<=10;++$g){
-                $temp1=$feedbacks->where('sa_id', '=', $t->pivot->id)
+                $temp1=Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 1)
                     ->avg("q".$g);
-                $temp2=$feedbacks->where('sa_id', '=', $t->pivot->id)
+                $temp2=Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 2)
                     ->avg("q".$g);
                 if($temp1==null) {$temp1=0;}
@@ -425,16 +418,16 @@ public function pdf_question_wise_report(Request $request){
             if ($p1_avg == NULL) $p1_avg = 0;
             $t['phase1_avg'] = round($p1_avg);
 
-            $p2_avg = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $p2_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 2)
                 ->avg('sum');
             if ($p2_avg == NULL) $p2_avg = 0;
             $t['phase2_avg'] = round($p2_avg);
 
-            $s1_count = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $s1_count = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 1)->count();
             if ($s1_count == NULL) $s1_count = 0;
-            $s2_count = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $s2_count = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 2)->count();
             if ($s2_count == NULL) $s2_count = 0;
             $t['phase1_student_count'] = $s1_count;
@@ -453,9 +446,9 @@ public function test(){
 
     $obj=array();
     $class_obj=new Classes();
-    global $classes,$departments,$students,$feedbacks;
-    $dept=$departments->where('id','=',1)->first();
-    $active_classes=$classes->where('isActive','=',1)
+    //global $classes,$departments,$students,$feedbacks;
+    $dept=Department::where('id','=',1)->first();
+    $active_classes=Classes::where('isActive','=',1)
                             ->where('department_id','=',1);
 
     foreach ($active_classes as $index=>&$c) {
@@ -478,12 +471,12 @@ public function test(){
 
             $t['faculty'] = $subjects->first()->faculties->where('id', '=', $t->pivot->faculty_id)->first();
 
-            $p1_avg = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $p1_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 1)
                 ->avg('sum');
             if ($p1_avg == NULL)  {$p1_avg = 0;}
             $t['phase1_avg'] = round($p1_avg);
-            $p2_avg = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $p2_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 2)
                 ->avg('sum');
 
@@ -492,10 +485,10 @@ public function test(){
             $p1_q=array();
             $p2_q=array();
             for($g=1;$g<=10;++$g){
-                $temp1=$feedbacks->where('sa_id', '=', $t->pivot->id)
+                $temp1=Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 1)
                     ->avg("q".$g);
-                $temp2=$feedbacks->where('sa_id', '=', $t->pivot->id)
+                $temp2=Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 2)
                     ->avg("q".$g);
                 if($temp1==null) {$temp1=0;}
@@ -506,10 +499,10 @@ public function test(){
             $t['phase1_question_wise']=$p1_q;
             $t['phase2_question_wise']=$p2_q;
 
-            $s1_count = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $s1_count = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 1)->count();
             if ($s1_count == NULL) $s1_count = 0;
-            $s2_count = $feedbacks->where('sa_id', '=', $t->pivot->id)
+            $s2_count = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 2)->count();
             if ($s2_count == NULL) $s2_count = 0;
             $t['phase1_student_count'] = $s1_count;
@@ -525,7 +518,7 @@ public function test(){
     return view('dummy')->with('class_obj',$obj)->with('dept',$dept);
 }
     public function all_class_report_page(){
-        global $departments;
+        $departments=Department::all();
         return view('principal.all_classes_report')->with('departments',$departments);
     }
     public function pdf_all_classes_report(Request $request){
@@ -533,9 +526,9 @@ public function test(){
             'dept_select'=>'required'
         ]);
         $obj=array();
-        global $classes,$departments,$students,$feedbacks;
-        $dept=$departments->where('id','=',$request->dept_select)->first();
-        $active_classes=$classes->where('isActive','=',1)
+        //global $classes,$departments,$students,$feedbacks;
+        $dept=Department::where('id','=',$request->dept_select)->first();
+        $active_classes=Classes::where('isActive','=',1)
             ->where('department_id','=',$request->dept_select);
 
         foreach ($active_classes as $index=>&$c) {
@@ -558,12 +551,12 @@ public function test(){
 
                 $t['faculty'] = $subjects->first()->faculties->where('id', '=', $t->pivot->faculty_id)->first();
 
-                $p1_avg = $feedbacks->where('sa_id', '=', $t->pivot->id)
+                $p1_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 1)
                     ->avg('sum');
                 if ($p1_avg == NULL)  {$p1_avg = 0;}
                 $t['phase1_avg'] = round($p1_avg);
-                $p2_avg = $feedbacks->where('sa_id', '=', $t->pivot->id)
+                $p2_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 2)
                     ->avg('sum');
 
@@ -572,10 +565,10 @@ public function test(){
                 $p1_q=array();
                 $p2_q=array();
                 for($g=1;$g<=10;++$g){
-                    $temp1=$feedbacks->where('sa_id', '=', $t->pivot->id)
+                    $temp1=Feedback::where('sa_id', '=', $t->pivot->id)
                         ->where('phase', '=', 1)
                         ->avg("q".$g);
-                    $temp2=$feedbacks->where('sa_id', '=', $t->pivot->id)
+                    $temp2=Feedback::where('sa_id', '=', $t->pivot->id)
                         ->where('phase', '=', 2)
                         ->avg("q".$g);
                     if($temp1==null) {$temp1=0;}
@@ -586,10 +579,10 @@ public function test(){
                 $t['phase1_question_wise']=$p1_q;
                 $t['phase2_question_wise']=$p2_q;
 
-                $s1_count = $feedbacks->where('sa_id', '=', $t->pivot->id)
+                $s1_count = Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 1)->count();
                 if ($s1_count == NULL) $s1_count = 0;
-                $s2_count = $feedbacks->where('sa_id', '=', $t->pivot->id)
+                $s2_count = Feedback::where('sa_id', '=', $t->pivot->id)
                     ->where('phase', '=', 2)->count();
                 if ($s2_count == NULL) $s2_count = 0;
                 $t['phase1_student_count'] = $s1_count;

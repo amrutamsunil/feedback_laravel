@@ -1,20 +1,4 @@
 @extends('layouts.login_template')
-<?php
-/*extract($_POST);
-session_start();
-asset('dbconfig.php');
-asset ('User_Class.php');
-$user_obj=new user_ns\User_Class($conn);
-if(isset($save))
-{
-    $err=" ";
-    $username=$conn->real_escape_string($uname);
-    $password=$conn->real_escape_string($pass);
-    $err=$user_obj->LoginCheck($username,$password,$err);
-}
-*/
-?>
-
 @section('content')
 <div class="limiter" >
     <div class="container-login100">

@@ -31,9 +31,11 @@ class StudentLoginController extends Controller
         $show=User::where('student_reg','=',$request->username)->get();
         $obj=User::where('student_reg','=',$request->username)
             ->whereIn('class_id',$active_classes)->first();
+
         if(Auth::guard('student')->attempt(['student_reg'=>$request->username,'password'=>$request->password,'id'=>$obj->id],$request->remember)){
             Session::flash('info','Welcome Admin');
-            return redirect()->intended('user/dashboard');
+            return redirect()->intended('user.dashboard');
+
         }
 
             Session::flash('Error','Invalid Credentials');

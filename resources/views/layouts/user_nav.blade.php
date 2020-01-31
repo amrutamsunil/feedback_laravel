@@ -56,6 +56,15 @@
         </div>
     </nav>
 </section>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 @yield('content')
 <!-- jQuery library -->
 <script src="{{asset('vendor/student_dashboard/assets/js/jquery.min.js')}}"></script>

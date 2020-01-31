@@ -46,7 +46,7 @@
     <center><h6><b>DEPARTMENT OF {{$dept->name}}</b></h6></center><br/>
 
 </div>
-@foreach($faculty_obj as $faculty)
+@foreach($obj as $faculty)
     @if($faculty['theory']['subjects']!=null||$faculty['lab']['subjects']!=null)
         <div class="no-break">
         <div class="float-left">

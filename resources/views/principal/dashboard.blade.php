@@ -2,12 +2,12 @@
 @section('content')
 <link rel="stylesheet" href="{{asset('css/loading.css')}}">
     <div>
-        <button id="cse" type="button" value="1" class="btn btn-light sel_btn">CSE</button>
-        <button id="ece" type="button" value="2" class="btn btn-danger sel_btn">ECE</button>
-        <button id="mech" type="button" value="3" class="btn btn-danger sel_btn">MECH</button>
-        <button id="civil" type="button" value="4" class="btn btn-danger sel_btn">CIVIL</button>
-        <button id="eee" type="button" value="5" class="btn btn-danger sel_btn">EEE</button>
-        <button id="mba" type="button" value="6" class="btn btn-danger sel_btn">MBA</button>
+        <button id="CSE" type="button" value="1" class="btn btn-light sel_btn">CSE</button>
+        <button id="ECE" type="button" value="2" class="btn btn-danger sel_btn">ECE</button>
+        <button id="MECH" type="button" value="3" class="btn btn-danger sel_btn">MECH</button>
+        <button id="CIVIL" type="button" value="4" class="btn btn-danger sel_btn">CIVIL</button>
+        <button id="EEE" type="button" value="5" class="btn btn-danger sel_btn">EEE</button>
+        <button id="MBA" type="button" value="6" class="btn btn-danger sel_btn">MBA</button>
 
 
     </div>
@@ -61,7 +61,7 @@
 
                                 backgroundColor: "#D6EAF8",
                                 fontFamily: "Times New Roman",
-                                text: "Department of"
+                                text: "Department of CSE"
                             },
                             animationDuration: 2000,
 
@@ -136,7 +136,7 @@
 
                                     backgroundColor: "#D6EAF8",
                                     fontFamily: "Times New Roman",
-                                    text: "Department of"
+                                    text: "Department of "+id
                                 },
                                 animationDuration: 2000,
 

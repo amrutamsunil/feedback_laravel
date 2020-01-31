@@ -18,11 +18,11 @@ class FacultyController extends Controller
     public function __construct()
     {
         $this->middleware('auth:faculty');
-        global $feedbacks,$classes,$students,$departments;
+        /*global $feedbacks,$classes,$students,$departments;
         $feedbacks=Feedback::all();
         $classes=Classes::all();
         $students=User::all();
-        $departments=Department::all();
+        $departments=Department::all();*/
     }
     public function username(){
         return 'employee_number';
@@ -47,31 +47,33 @@ class FacultyController extends Controller
         $this->validate($request,[
             'sa_id'=>'required'
         ]);
-        global $feedbacks;
+       // global $feedbacks;
         $sa=Subject_Alloc::where('id','=',$request->sa_id)->first();
         $subject_type=Subject::where('id','=',$sa->subject_id)->first();
         if($subject_type->type=="T"){
-            $questions=[env("Q1","Set the questions in .env file"),
-                env("Q2","Set the questions in .env file"),
-                env("Q3","Set the questions in .env file"),
-                env("Q4","Set the questions in .env file"),
-                env("Q5","Set the questions in .env file"),
-                env("Q6","Set the questions in .env file"),
-                env("Q7","Set the questions in .env file"),
-                env("Q8","Set the questions in .env file"),
-                env("Q9","Set the questions in .env file"),
-                env("Q10","Set the questions in .env file")];
+            $questions=[config("questions.Q1"),
+                config("questions.Q2"),
+                config("questions.Q3"),
+                config("questions.Q4"),
+                config("questions.Q5"),
+                config("questions.Q6"),
+                config("questions.Q7"),
+                config("questions.Q8"),
+                config("questions.Q9"),
+                config("questions.Q10")
+                ];
         }else if($subject_type->type=="L"){
-            $questions=[env("Q1_lab","Set the questions in .env file"),
-                env("Q2_lab","Set the questions in .env file"),
-                env("Q3_lab","Set the questions in .env file"),
-                env("Q4_lab","Set the questions in .env file"),
-                env("Q5_lab","Set the questions in .env file"),
-                env("Q6_lab","Set the questions in .env file"),
-                env("Q7_lab","Set the questions in .env file"),
-                env("Q8_lab","Set the questions in .env file"),
-                env("Q9_lab","Set the questions in .env file"),
-                env("Q10_lab","Set the questions in .env file")];
+            $questions=[config("questions.Q1_lab"),
+                config("questions.Q2_lab"),
+                config("questions.Q3_lab"),
+                config("questions.Q4_lab"),
+                config("questions.Q5_lab"),
+                config("questions.Q6_lab"),
+                config("questions.Q7_lab"),
+                config("questions.Q8_lab"),
+                config("questions.Q9_lab"),
+                config("questions.Q10_lab")
+                ];
         }
         $students_count=User::where('class_id','=',$sa->class_id)->count();
         $output="<hr style='border-top: dotted 1px;' />
@@ -96,16 +98,16 @@ class FacultyController extends Controller
         </tr>
         ";
         for($i=1;$i<=10;++$i) {
-            $p1 = $feedbacks->where('sa_id', '=',$request->sa_id)
+            $p1 = Feedback::where('sa_id', '=',$request->sa_id)
                 ->where('phase', '=', 1)
                 ->avg('q'.$i);
-            $c1=$feedbacks->where('sa_id', '=',$request->sa_id )
+            $c1=Feedback::where('sa_id', '=',$request->sa_id )
                 ->where('phase', '=', 1)
                 ->count();
-            $c2=$feedbacks->where('sa_id', '=',$request->sa_id)
+            $c2=Feedback::where('sa_id', '=',$request->sa_id)
                 ->where('phase', '=', 2)
                 ->count();
-            $p2 = $feedbacks->where('sa_id', '=',$request->sa_id)
+            $p2 = Feedback::where('sa_id', '=',$request->sa_id)
                 ->where('phase', '=', 2)
                 ->avg('q'.$i);
             $output.="<tr>";
@@ -129,7 +131,8 @@ class FacultyController extends Controller
             $this->validate($request,[
                 'sa_id'=>'required'
             ]);
-        global $feedbacks;$obj=array();
+        //global $feedbacks;
+        $obj=array();
         $dept=Department::where('id','=',auth()->user()->department_id)->first();
         $obj[0]['dept_name']=$dept->name;
         $obj[0]['name']=auth()->user()->name;
@@ -137,44 +140,46 @@ class FacultyController extends Controller
         $subject_type=Subject::where('id','=',$sa->subject_id)->first();
         $obj[0]['subject_name']=$subject_type->name;
         if($subject_type->type=="T"){
-            $questions=[env("Q1","Set the questions in .env file"),
-                env("Q2","Set the questions in .env file"),
-                env("Q3","Set the questions in .env file"),
-                env("Q4","Set the questions in .env file"),
-                env("Q5","Set the questions in .env file"),
-                env("Q6","Set the questions in .env file"),
-                env("Q7","Set the questions in .env file"),
-                env("Q8","Set the questions in .env file"),
-                env("Q9","Set the questions in .env file"),
-                env("Q10","Set the questions in .env file")];
+            $questions=[config("questions.Q1"),
+                config("questions.Q2"),
+                config("questions.Q3"),
+                config("questions.Q4"),
+                config("questions.Q5"),
+                config("questions.Q6"),
+                config("questions.Q7"),
+                config("questions.Q8"),
+                config("questions.Q9"),
+                config("questions.Q10")
+                ];
         }else if($subject_type->type=="L"){
-            $questions=[env("Q1_lab","Set the questions in .env file"),
-                env("Q2_lab","Set the questions in .env file"),
-                env("Q3_lab","Set the questions in .env file"),
-                env("Q4_lab","Set the questions in .env file"),
-                env("Q5_lab","Set the questions in .env file"),
-                env("Q6_lab","Set the questions in .env file"),
-                env("Q7_lab","Set the questions in .env file"),
-                env("Q8_lab","Set the questions in .env file"),
-                env("Q9_lab","Set the questions in .env file"),
-                env("Q10_lab","Set the questions in .env file")];
+            $questions=[config("questions.Q1_lab"),
+                config("questions.Q2_lab"),
+                config("questions.Q3_lab"),
+                config("questions.Q4_lab"),
+                config("questions.Q5_lab"),
+                config("questions.Q6_lab"),
+                config("questions.Q7_lab"),
+                config("questions.Q8_lab"),
+                config("questions.Q9_lab"),
+                config("questions.Q10_lab")
+                ];
         }
         $students_count=User::where('class_id','=',$sa->class_id)->count();
-        $c1 = $feedbacks->where('sa_id', '=', $request->sa_id)
+        $c1 = Feedback::where('sa_id', '=', $request->sa_id)
             ->where('phase', '=', 1)
             ->count();
-        $c2 = $feedbacks->where('sa_id', '=', $request->sa_id)
+        $c2 = Feedback::where('sa_id', '=', $request->sa_id)
             ->where('phase', '=', 2)
             ->count();
         $obj[0]['student_count']=$students_count;
         $obj[0]['st_count1']=$c1;
         $obj[0]['st_count2']=$c2;
         for($i=1;$i<=10;++$i) {
-            $p1 = $feedbacks->where('sa_id', '=', $request->sa_id)
+            $p1 = Feedback::where('sa_id', '=', $request->sa_id)
                 ->where('phase', '=', 1)
                 ->avg('q' . $i);
 
-            $p2 = $feedbacks->where('sa_id', '=', $request->sa_id)
+            $p2 = Feedback::where('sa_id', '=', $request->sa_id)
                 ->where('phase', '=', 2)
                 ->avg('q' . $i);
             $obj[$i]['question']=$questions[($i-1)];
@@ -190,16 +195,16 @@ class FacultyController extends Controller
         $datapoints2=array();$datapoints1=array();$obj=array();
         $class_obj=new Classes();
         $active_classes=$class_obj->isActive();
-        global $feedbacks;
+        //global $feedbacks;
         $faculties=Faculty::with(['subject_allocations'=>function($query) use($active_classes) {
             $query->whereIn('class_id',$active_classes);
         }])->where('id','=',auth()->user()->id)->get();
         foreach ($faculties[0]->subject_allocations as &$f){
             $subject_name=Subject::where('id','=',$f->subject_id)->first();
-            $avg1=$feedbacks->where('sa_id','=',$f->id)
+            $avg1=Feedback::where('sa_id','=',$f->id)
                 ->where('phase','=',1)
                 ->avg('sum');
-            $avg2=$feedbacks->where('sa_id','=',$f->id)
+            $avg2=Feedback::where('sa_id','=',$f->id)
                 ->where('phase','=',2)
                 ->avg('sum');
             if($avg1==null) $avg1=0;

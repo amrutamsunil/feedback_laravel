@@ -81,7 +81,7 @@ class UserController extends Controller
             <td width='5%'>1</td>
             <td width='55%'>
                <!--Does the Faculty come prepared on lessons?-->
-               {{config('question.Q1')}}
+               ".config('questions.Q1')."
                
             </td>
             <td width='45%'>
@@ -93,8 +93,7 @@ class UserController extends Controller
         <tr>
             <td >2</td>
             <td>
-                    <!--Does the Faculty present the lessons clearly and orderly?-->
-                    {{config('question.Q2')}}
+                    ".config('questions.Q2')."
                 </td>
             <td>
                 <input name='q2' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -106,7 +105,7 @@ class UserController extends Controller
             <td>3</td>
             <td>
                 <!--Does the Faculty speak with the voice clarity and good language ?-->
-                {{config('question.Q3')}}
+                ".config('questions.Q3')."
             </td>
             <td>
                 <input name='q3' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -118,7 +117,7 @@ class UserController extends Controller
             <td>4</td>
             <td>
                     <!--Does the Faculty keep the class under discipline and control?-->
-                    {{config('question.Q4')}}
+                    ".config('questions.Q4')."
 
             </td>
             <td>
@@ -130,7 +129,7 @@ class UserController extends Controller
         <tr>
             <td>5</td>
             <td>
-                    Does the Faculty give response to students’ doubts and questions?
+".config('questions.Q5')."
                 </td>
             <td>
                 <input name='q5' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -141,7 +140,7 @@ class UserController extends Controller
         <tr>
             <td>6</td>
             <td>
-                    Does the Faculty possess depth of knowledge in subject?
+".config('questions.Q6')."
                  </td>
             <td><input name='q6' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
                                                required title=''>
@@ -151,7 +150,7 @@ class UserController extends Controller
         <tr>
             <td>7</td>
             <td>
-                    Does the Faculty give and assignments to improve the studies?
+".config('questions.Q7')."
                  </td>
             <td>
                 <input name='q7' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -162,7 +161,7 @@ class UserController extends Controller
         <tr>
             <td>8</td>
             <td>
-                    Is the Faculty available outside class hours to clarify the doubts?
+".config('questions.Q8')."
             </td>
             <td>
                 <input name='q8' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -173,7 +172,7 @@ class UserController extends Controller
         <tr>
             <td >9</td>
             <td>
-                    Does the Faculty use the black board and modern techniques effectively?
+".config('questions.Q9')."
             </td>
             <td>
                 <input name='q9' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -185,7 +184,7 @@ class UserController extends Controller
         <tr>
             <td>10</td>
             <td>
-                Is the Faculty regular and punctual to classes?
+                ".config('questions.Q10')."
                     </td>
             <td>
                     <input name='q10' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -216,7 +215,7 @@ $output.="
         <tr>
             <td width='5%'>1</td>
             <td width='55%'>
-               1
+            ".config('questions.Q1_lab')."
             </td>
             <td width='45%'>
                 <input name='q1' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -227,7 +226,7 @@ $output.="
         <tr>
             <td >2</td>
             <td>
-                    2
+                    ".config('questions.Q2_lab')."
                 </td>
             <td>
                 <input name='q2' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -238,7 +237,7 @@ $output.="
         <tr>
             <td>3</td>
             <td>
-                3
+               ".config('questions.Q3_lab')."
             </td>
             <td>
                 <input name='q3' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -249,7 +248,7 @@ $output.="
         <tr>
             <td>4</td>
             <td>
-                   4
+                 ".config('questions.Q4_lab')."
 
             </td>
             <td>
@@ -261,7 +260,7 @@ $output.="
         <tr>
             <td>5</td>
             <td>
-                   5
+                ".config('questions.Q5_lab')."
                 </td>
             <td>
                 <input name='q5' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -272,7 +271,7 @@ $output.="
         <tr>
             <td>6</td>
             <td>
-                   6
+                   ".config('questions.Q6_lab')."
                  </td>
             <td><input name='q6' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
                                                required title=''>
@@ -282,7 +281,7 @@ $output.="
         <tr>
             <td>7</td>
             <td>
-                   7
+                   ".config('questions.Q7_lab')."
                  </td>
             <td>
                 <input name='q7' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -293,7 +292,7 @@ $output.="
         <tr>
             <td>8</td>
             <td>
-                   8
+                  ".config('questions.Q8_lab')."
             </td>
             <td>
                 <input name='q8' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -304,7 +303,7 @@ $output.="
         <tr>
             <td >9</td>
             <td>
-                    9
+                    ".config('questions.Q9_lab')."
             </td>
             <td>
                 <input name='q9' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -316,7 +315,7 @@ $output.="
         <tr>
             <td>10</td>
             <td>
-                10
+                ".config('questions.Q10_lab')."
                     </td>
             <td>
                     <input name='q10' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
