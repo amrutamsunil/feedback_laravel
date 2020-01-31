@@ -53,6 +53,19 @@ return [
         'student'=>[
             'driver'=>'session',
             'provider'=>'students'
+        ],
+        'principal'=>[
+            'driver'=>'session',
+            'provider'=>'principals'
+        ],
+        'faculty'=>[
+            'driver'=>'session',
+            'provider'=>'faculties'
+        ],
+        'developer'=>[
+            'driver'=>'session',
+            'provider'=>'developers'
+
         ]
 
     ],
@@ -86,6 +99,18 @@ return [
         'students'=>[
             'driver'=>'eloquent',
             'model' => App\User::class,
+        ],
+        'principals'=>[
+            'driver'=>'eloquent',
+            'model'=>App\Principal::class,
+        ],
+        'faculties'=>[
+            'driver'=>'eloquent',
+            'model'=>App\Faculty::class,
+        ],
+        'developers'=>[
+            'driver'=>'eloquent',
+            'model'=>App\Developer::class,
         ]
 
 

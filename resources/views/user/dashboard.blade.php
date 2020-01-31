@@ -1,4 +1,3 @@
-
 @extends('layouts.user_nav')
        <!-- End menu -->
 @section('content')

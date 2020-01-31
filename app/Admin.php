@@ -13,5 +13,11 @@ class Admin extends Authenticatable
     protected $fillable=[
         'username','password','dept_id'
     ];
+    protected $hidden=[
+        'password',
+    ];
+    public function department(){
+        return $this->belongsTo('App\Department','dept_id');
+    }
 
 }

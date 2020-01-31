@@ -7,6 +7,8 @@
     <title>Select Phase</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" type="text/css" href="{{asset('css/loading.css')}}">
+
     <!-- Favicon -->
 
     <!-- Font awesome -->
@@ -42,14 +44,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand">Hello{{auth()->user()->name}}</a>
+                <a class="navbar-brand">Hello {{auth()->user()->name}}</a>
 
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul id="top-menu" class="nav navbar-nav navbar-right main-nav">
-                    <li class="active"><a href="dashboard.php">Home</a></li>
-                    <li><a href="dashboard.php?page=change_password">Change Password</a></li>
-                    <li><a href="logout.php">Signout</a></li>
+                    <li><a href="#">Change Password</a></li>
+                    <li><a href="{{Route('user.logout')}}">Signout</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
@@ -73,4 +74,27 @@
 <script src="{{asset('vendor/student_dashboard/assets/js/custom.js')}}"></script>
 
 </body>
+<link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
+<script type='text/javascript'>
+    toastr.options.closeDuration = 200;
+    toastr.options.closeEasing = 'swing';
+    toastr.options.showMethod = 'slideDown';
+    toastr.options.hideMethod = 'slideUp';
+    //toastr.options.closeMethod = 'slideUp';
+    toastr.options.newestOnTop = false;
+    toastr.options.preventDuplicates = true;
+    toastr.options.extendedTimeOut = 60;
+    //toastr.options.progressBar = true;
+    toastr.options.positionClass='toast-bottom-center';
+    @foreach ($errors->all() as $error)
+    toastr.error("{{$error}}");
+    @endforeach
+    @if(Session::has('success'))
+    toastr.success("{{Session::get('success')}}");
+    @elseif(Session::has('Error'))
+    toastr.error("{{Session::get('error')}}");
+    @elseif(Session::has('info'))
+    toastr.info("{{Session::get('info')}}");
+    @endif
+</script>
 </html>

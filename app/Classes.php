@@ -28,4 +28,7 @@ class Classes extends Model
     public function isActiveLists($dept_id){
         return $this->where('isActive','=',1)->where('department_id','=',$dept_id)->get();
     }
+    public function department(){
+        return $this->belongsTo('App\Department','department_id');
+    }
 }

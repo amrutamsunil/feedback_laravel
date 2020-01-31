@@ -1,67 +1,102 @@
-<html>
-<?php
-include ('../dbconfig.php');
-include ('../admin/Admin_Class.php');
-$admin_obj=new admin_ns\Admin_Class($conn);
-?>
-<head>
-    <script src="{{asset('lib/jquery/jquery.min.js')}}"></script>
-    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
-    <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
-    <style>
-        .sunil_custom_pdf {
-            background-image: url( "{{asset('images/PDF-icon-small-231x300.png')}}" ) ;
-            background-position: center;
-            background-size: contain;
-            background-repeat: no-repeat;
-            display: block;
-            height: 80px;
-            width: 80px;
-        }
+@extends('layouts.principal_nav')
+@section('content')
+    <div class="jumbotron">
+        <form method="post" action="{{Route('principal.pdf_classwise_report')}}">
+            @csrf
+            <div class="row row d-flex p-3 bg-secondary">
+                <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
+                    <label for="dept" style="font-size: 18px;font-family: Arial;">SELECT DEPARTMENT</label></div>
+                <div class="col-md-8">
+                    <select class="form-control mdb-select md-form chosen" id="dept" name="batch_select" id="btch" required>
+                        <option value="">CHOOSE A DEPARTMENT</option>
+                        @foreach($departments as $dept)
+                            <option value="{{$dept->id}}">{{$dept->short}}</option>
+                        @endforeach
+                    </select></div>
+            </div>
+            <br/>
+            <div class="row row d-flex p-3 bg-secondary">
+                <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
+                    <label for="clssel_" style="font-size: 18px;font-family: Arial;">SELECT CLASS</label></div>
+                <div class="col-md-8">
+                    <select class="form-control mdb-select md-form chosen" id="class_select" name="class_id"  required>
+                    </select></div>
+                <div class="col-md-2">
+                    <input name="ok" type="submit" id="pdfb" value="" class="sunil_custom_pdf"/></div>
+            </div>
+        </form></div>
+    <div class="modal" id="loading" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center><div class="loader"></div></center>
+                    <center><h2>Loading...</h2></center>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id ="classtable" class="col-lg-12 col-md-6 col-sm-6">
+    </div>
+    <script type="text/javascript">
+        $(document).ready(
+            function () {
+                $("#pdfb").hide();
+                toastr.warning("Choose a Department");
 
-    </style>
-</head>
-<body style="max-width:100%;overflow-x:hidden;">
-<br/><br/>
-<div >
-    <form method="post" action="pdf_classwise_report.php">
-        <div class="row row d-flex p-3 bg-secondary">
-            <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
-                <label for="clss" >Select Class</label></div>
-            <div class="col-md-8">
-                <select class="form-control mdb-select md-form chosen" name="classSelect" id="clss" required>
-                    <?php
-                    echo $admin_obj->Class_lists($_SESSION['dept_id']);
-                    ?>
-                </select></div>
-            <div class="col-md-2">
-                <input name="go" type="submit" value="" class="sunil_custom_pdf"/></div>
-    </form>
-</div>
+                $('#dept').on('change',function () {
+                    var dept=$(this).val();
+                    if(dept){
+                        $.ajax({
+                            type:'POST',
+                            dataType: "json",
+                            url:"{{Route('principal.dept_class')}}",
+                            data:{dept:dept,
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            success:function(data) {
 
-<div id ="classtable" class="col-lg-12 col-md-6 col-sm-6">
+                                $('#class_select').html('<option selected="selected" value="">Select Class</option>');
+                                $.each(data, function(key, value) {
+                                    console.log('key :'+ key + '  value :'+value);
+                                    $('#class_select').append('<option value="'+key+'">'+value+'</option>');
+                                });
+                                $("#pdfb").show();
 
-</div>
-
-<script type="text/javascript">
-    $(".chosen").select2();
-    $("#clss").on('change',function () {
-        var class_id=$(this).val();
-        if(class_id){
-            $.ajax(
-                {
-                    type:'post',
-                    url:'../admin/ajax_class_wise_report.php',
-                    data:"class_id="+class_id,
-                    success:function (response) {
-                        $('#classtable').html(response);
+                            }
+                        });
                     }
+                    else{
+                        $('#class_select').html('<option value="">Select Batch First</option>');
+                    }
+                });
 
-                }
-            );
-        }
-    });
-</script>
-</body>
-</html>
+            }
+        );
+
+        $("#class_select").on('change',function (e) {
+            e.preventDefault();
+            var class_id=$(this).val();
+            if(class_id){
+                $.ajax(
+                    {
+                        type:'POST',
+                        url:"{{Route('principal.ajax_class_wise')}}",
+                        data:{
+                            class_id:class_id,
+                            "_token": "{{ csrf_token() }}"
+                        },
+                        beforeSend:function(){
+                            $("#loading").modal();
+                        },
+                        success:function (response) {
+                            $('#classtable').html(response);
+                            $("#loading").modal('hide');
+                        }
+
+                    }
+                );
+            }
+        });
+        $(".chosen").select2();
+    </script>
+@endsection

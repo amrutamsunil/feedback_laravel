@@ -1,34 +1,15 @@
-<html>
-<head>
-    <meta id="token" name="token" content="{{csrf_token()}}">
-    <script src="{{asset('js/jquery.min.js')}}"></script>
-    <script src="{{asset('js/toastr.min.js')}}"></script>
-    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
-    <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
-    <style>
-        .sunil_custom_pdf {
-            background-image: url( {{asset('images/PDF-icon-small-231x300.png')}} ) ;
-            background-position: center;
-            background-size: contain;
-            background-repeat: no-repeat;
-            display: block;
-            height: 80px;
-            width: 80px;
-        }
-
-    </style>
-</head>
-<body style="max-width:100%;overflow-x:hidden;">
-<br/><br/>
+@extends('layouts.admin_nav')
+@section('content')
+    <br/><br/>
 <div>
-<form method="post" action="pdf_classwise_report.php">
+<form method="post" action="{{Route('hod.pdf_classwise_report')}}">
     @csrf
     <div class="row row d-flex p-3 bg-secondary">
         <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
             <label for="clss" style="font-family: 'Arial';font-size: 18px">SELECT CLASS</label></div>
         <div class="col-md-8">
-            <select class="form-control mdb-select md-form chosen" name="classSelect" id="clss" required>
+            <select class="form-control mdb-select md-form chosen" name="class_id" id="clss" required>
+                <option value="">Select Any Class</option>
                @foreach($classes as $class)
                 <option value="{{$class->id}}">
                    {{$class->name}}
@@ -36,17 +17,28 @@
                    @endforeach
             </select></div>
         <div class="col-md-2">
-            <input name="ok" type="submit" value="" class="sunil_custom_pdf"/></div>
+            <input name="ok" type="submit" id="pdfb" value="" class="sunil_custom_pdf"/></div>
     </div>
 </form>
 </div>
-
+    <div class="modal" id="loading" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center><div class="loader"></div></center>
+                    <center><h2>Loading...</h2></center>
+                </div>
+            </div>
+        </div>
+    </div>
 <div id ="classtable" class="col-lg-12 col-md-6 col-sm-6">
-
 </div>
 
 <script type="text/javascript">
     $(".chosen").select2();
+    $("#pdfb").on('click',function () {
+       toastr.success("Downloading...");
+    });
     $("#clss").on('change',function (e) {
         e.preventDefault();
         var class_id=$(this).val();
@@ -59,8 +51,13 @@
                         class_id:class_id,
                         "_token": "{{ csrf_token() }}"
                     },
+                    beforeSend:function(){
+                        $("#loading").modal();
+
+                    },
                     success:function (response) {
                         $('#classtable').html(response);
+                        $("#loading").modal('hide');
                     }
 
                 }
@@ -68,5 +65,4 @@
         }
     });
 </script>
-</body>
-</html>
+@endsection

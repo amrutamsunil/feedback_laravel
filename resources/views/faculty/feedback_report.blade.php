@@ -1,99 +1,63 @@
-<?php
-include ('../dbconfig.php');
-include ('Faculty.php');
-extract($_POST);
-$fac_rep_obj= new \faculty\Faculty($conn);
-$batch= "-NIL";$sem="-NIL-";$name= "-NIL";$batch="-NIL-";$subj_name="-NIL-";
-if(isset($_SESSION['user'])){
-    $employee_number=$_SESSION['user'];
-}
-else {
-    header('location:index.php');
-}
-
-
-$que_wise_report=array();
-if(isset($subjSelect)) {
-
-    if ($subjSelect == "" ) {
-        echo "
-        <script>
-        alert('Select any Subject!!');
-        </script>
-        ";
-    } else {
-        $que_wise_report = $fac_rep_obj->faculty_report($_POST['subjSelect']);
-        $cls_details=$fac_rep_obj->class_details($_POST['subjSelect']);
-        $batch=$cls_details['batch'];$sem=$cls_details['sem'];$name=$cls_details['name'];
-        $subj_name=$cls_details[0]['short'];
-    }
-}
-
-?>
-<html>
-<head>
-    <script src="{{asset('lib/jquery/jquery.min.js')}}"></script>
-    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
-    <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
-    <link rel="stylesheet" href="{{asset('css/font-awesome.min.css')}}">
-    <link href="{{asset('css/star-rating.css')}}" media="all" rel="stylesheet" type="text/css"/>
-    <style>
-        .close-image {
-            background-image: url( "{{asset('images/PDF-icon-small-231x300.png')}}" ) ;
-            background-position: center;
-            background-size: contain;
-            background-repeat: no-repeat;
-            display: block;
-            height: 80px;
-            width: 80px;
-        }
-
-    </style>
-
-</head>
-<body style="overflow-x: hidden">
-<br/><br/><br/>
-<div >
-    <form method="post" action="print_feedback_report.php">
-        <div class="row row d-flex p-3 bg-secondary">
-            <div style="text-align: center;padding-left:60px;padding-top: 4px;font-size:16px" class="col-md-2">
-                <label for="sbsel" style="font-family: 'Adobe Caslon Pro';font-size: 20px"> SELECT SUBJECT </label></div>
+@extends('layouts.faculty_nav')
+@section('content')
+    <br/><br/>
+    <form method="post" action="{{Route('faculty.pdf_faculty_report')}}" >
+        @csrf
+        <div class="row  d-flex p-3 bg-secondary">
+            <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
+                <label for="stf" style="font-family: Arial;font-size: 18px">SELECT SUBJECT</label></div>
             <div class="col-md-8">
-                <select class="form-control mdb-select md-form chosen" name="subjSelect" id="sbsel">
-                    <?php
-                    echo "<h1 style='font-family: 'Adobe Caslon Pro''><b>".$fac_rep_obj->subject_lists($employee_number)."</b></h1>";
-                    ?>
+                <select class="form-control mdb-select md-form chosen" id="stf" name="sa_id" required>
+                    <option value="">Select Any Subject</option>
+                    @foreach($subjects as $subject)
+                        <option value="{{$subject['sa_id']}}">{{$subject['name']}}</option>
+                    @endforeach
                 </select></div>
             <div class="col-md-2">
-                <input name="go" type="submit" value=""  class="close-image"/> </div></div>
-    </form></div>
-<br/>
-<p id="subj_name">
+                <input name="go" type="submit" id="pdfb" value="" class="sunil_custom_pdf"/></div>
+        </div>
+    </form>
+    <div class="modal" id="loading" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center><div class="loader"></div></center>
+                    <center><h2>Loading...</h2></center>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id ="facultytable" class="col-lg-12 col-md-6 ">
+    </div>
+    @endsection
+@section('script')
+    <script type="text/javascript">
+        $(document).ready(
+            function () {
+                $(".chosen").select2();
+                $("#stf").on('change',function () {
+                    var sa_id=$(this).val();
+                    $.ajax({
+                        type:'POST',
+                        url:"{{Route('faculty.ajax_subject_report')}}",
+                        data:{
+                          sa_id:sa_id,
+                            "_token": "{{ csrf_token() }}"
+                        },
+                        beforeSend:function () {
+                            $("#loading").modal();
+                        },
+                        success:function (response) {
+                            $("#facultytable").html(response);
+                            $("#loading").modal('hide');
+                        },
+                        complete:function () {
+                            $("#loading").modal('hide');
+                        }
 
-</p>
-<div id="data">
-</div>
-<script type="text/javascript">
-    $('.chosen').select2();
-    $('#sbsel').on('change',function () {
-       var subj_selected=$(this).val();
-        if(subj_selected) {
-        $.ajax({
-            type:'post',
-            url:'ajax_faculty_report.php',
-            data:"subj_id="+subj_selected,
-            success:function (response)
-            {
-                $('#data').html(response);
+                    });
+                });
             }
-
-        });
-        }
-
-
-
-    });
-</script>
-</body>
-</html>
+        );
+    </script>
+    @endsection

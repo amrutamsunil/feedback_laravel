@@ -1,61 +1,59 @@
-    <?php
-    include ('dbconfig.php');
-    include ('Admin_Class.php');
-    $admin_obj=new admin_ns\Admin_Class($conn);
-    ?>
-    <html>
-    <head>
-        <script src="{{asset('lib/jquery/jquery.min.js')}}"></script>
-        <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
-        <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
-        <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
-        <style>
-            .sunil_custom_pdf {
-                background-image: url( "{{asset('images/PDF-icon-small-231x300.png')}}" ) ;
-                background-position: center;
-                background-size: contain;
-                background-repeat: no-repeat;
-                display: block;
-                height: 80px;
-                width: 80px;
-            }
-
-        </style>
-
-    </head>
-<body>
-<br/><br/>
+@extends('layouts.admin_nav')
+@section('content')
+    <br/><br/>
 <div>
-<form method="post" action="pdf_facultywise_report.php" >
+<form method="post" action="{{Route('hod.pdf_faculty_wise_report')}}" >
+    @csrf
 <div class="row  d-flex p-3 bg-secondary">
     <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
         <label for="stf" style="font-family: Arial;font-size: 18px">SELECT FACULTY</label></div>
     <div class="col-md-8">
-                    <select class="form-control mdb-select md-form chosen" id="stf" name="staffselect" required>
-                    <?php
-                       echo $admin_obj->faculty_lists($_SESSION['dept_id']);
-                    ?>
+                    <select class="form-control mdb-select md-form chosen" id="stf" name="faculty_id" required>
+                    <option value="">Select Any Faculty</option>
+                        @foreach($faculties as $faculty)
+                        <option value="{{$faculty->id}}">{{$faculty->name}}</option>
+                        @endforeach
                     </select></div>
     <div class="col-md-2">
-        <input name="go" type="submit" value="" class="sunil_custom_pdf"/></div>
+        <input name="go" type="submit" id="pdfb" value="" class="sunil_custom_pdf"/></div>
 </div>
 </form>
 </div>
-
+    <div class="modal" id="loading" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center><div class="loader"></div></center>
+                    <center><h2>Loading...</h2></center>
+                </div>
+            </div>
+        </div>
+    </div>
 <div id ="facultytable" class="col-lg-12 col-md-6 ">
+
 </div>
 <script>
         $(".chosen").select2();
+        $("#pdfb").on('click',function () {
+            toastr.success("Downloading...");
+        });
         $('#stf').on('change',function () {
             var staff_selected=$(this).val();
             if(staff_selected) {
                 $.ajax({
-                    type:'post',
-                    url:'ajax_faculty_report.php',
-                    data:"staff_id="+staff_selected,
+                    type:'POST',
+                    url:'{{Route('hod.ajax_faculty_wise')}}',
+                    data:{
+                        faculty_id:staff_selected,
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    beforeSend:function(){
+                      $("#loading").modal();
+                    },
                     success:function (response)
                     {
                         $('#facultytable').html(response);
+                        $("#loading").modal('hide');
                     }
 
                 });
@@ -66,6 +64,5 @@
         });
 
 </script>
-</body>
-</html>
+@endsection
 

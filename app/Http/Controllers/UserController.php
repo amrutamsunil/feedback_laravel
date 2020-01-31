@@ -35,7 +35,7 @@ class UserController extends Controller
         $student=User::with('feedbacks')->where('id','=',auth()->user()->id)->get();
         foreach($subjects[0]->subjects as $index=>&$t){
             $t['faculty_name']=$subjects[0]->faculties[$index]->name;
-            //$t['faculty_name']=Faculty::where('id','=',$t->pivot->faculty_id)->first('name'); Better Approach
+            //$t['faculty_name']=$subjects[0]->faculties->where('id','=',$t->pivot->faculty_id)->first('name'); Better Approach
             if($this->check_feedback_submit($t->pivot->id,$student[0]->feedbacks,$phase)){
                 $t['flag']="Green";
             }else{
@@ -80,7 +80,9 @@ class UserController extends Controller
         <tr>
             <td width='5%'>1</td>
             <td width='55%'>
-               Does the Faculty come prepared on lessons?
+               <!--Does the Faculty come prepared on lessons?-->
+               {{config('question.Q1')}}
+               
             </td>
             <td width='45%'>
                 <input name='q1' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -91,7 +93,8 @@ class UserController extends Controller
         <tr>
             <td >2</td>
             <td>
-                    Does the Faculty present the lessons clearly and orderly?
+                    <!--Does the Faculty present the lessons clearly and orderly?-->
+                    {{config('question.Q2')}}
                 </td>
             <td>
                 <input name='q2' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -102,7 +105,8 @@ class UserController extends Controller
         <tr>
             <td>3</td>
             <td>
-                Does the Faculty speak with the voice clarity and good language ?
+                <!--Does the Faculty speak with the voice clarity and good language ?-->
+                {{config('question.Q3')}}
             </td>
             <td>
                 <input name='q3' type='text' class='rating' data-min=0 data-max=5 data-step=1 data-size='md'
@@ -113,7 +117,8 @@ class UserController extends Controller
         <tr>
             <td>4</td>
             <td>
-                    Does the Faculty keep the class under discipline and control?
+                    <!--Does the Faculty keep the class under discipline and control?-->
+                    {{config('question.Q4')}}
 
             </td>
             <td>
@@ -198,6 +203,7 @@ class UserController extends Controller
 
     }else{
 $output.="
+        <input name='sa_id' type='hidden' value='$request->sa_id'>
      <table class='table table-bordered' width='100%'>
         <thead>
         <tr class='primary'>
@@ -322,7 +328,7 @@ $output.="
     </table>
 
             <div class='row row d-flex p-3 bg-secondary'>
-                <center><input type='submit' value='SUBMIT' class=' btn btn-success btn-secondary btn-lg' name='ok'> </center>
+                <center><input type='submit' value='SUBMIT' id='ok' class=' btn btn-success btn-secondary btn-lg' name='ok'> </center>
             </div>
     ";
 }

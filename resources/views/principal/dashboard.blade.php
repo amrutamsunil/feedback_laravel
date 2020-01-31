@@ -1,172 +1,179 @@
-@extends('layouts.principal_nav.')
-<?php
-session_start();
-if(!isset($_SESSION['user']))
-{
-    header('location:index.php');
-}
-@$info=$_GET['info'];
-if($info!="")
-{
-if($info=="print_all_faculty_wise_cse")
-{
-    $_SESSION['dept_id']=1;
-    header('location:all_faculty_print.php');
-}
-else if($info=="print_all_faculty_wise_ece")
-{
-    $_SESSION['dept_id']=2;
-    header('location:all_faculty_print.php');
-}
-else if($info=="print_all_faculty_wise_mech")
-{
-    $_SESSION['dept_id']=3;
-    header('location:all_faculty_print.php');
-}
-else if($info=="print_all_faculty_wise_civil")
-{
-    $_SESSION['dept_id']=4;
-    header('location:all_faculty_print.php');
-}
-else if($info=="print_all_faculty_wise_eee")
-{
-    $_SESSION['dept_id']=5;
-    header('location:all_faculty_print.php');
-}
-else if($info=="print_all_faculty_wise_mba")
-{
-    $_SESSION['dept_id']=6;
-    header('location:all_faculty_print.php');
-}
-else if($info=="print_all_class_wise_cse")
-{
-    $_SESSION['dept_id']=1;
-    header('location:all_class_print.php');
-}
-
-else if($info=="print_all_class_wise_ece")
-{
-    $_SESSION['dept_id']=2;
-    header('location:all_class_print.php');
-}
-else if($info=="print_all_class_wise_mech")
-{
-    $_SESSION['dept_id']=3;
-    header('location:all_class_print.php');
-}
-else if($info=="print_all_class_wise_civil")
-{
-    $_SESSION['dept_id']=4;
-    header('location:all_class_print.php');
-}
-else if($info=="print_all_class_wise_eee")
-{
-    $_SESSION['dept_id']=5;
-    header('location:all_class_print.php');
-}
-else if($info=="print_all_class_wise_mba")
-{
-    $_SESSION['dept_id']=6;
-    header('location:all_class_print.php');
-}
-
-}
-include('../dbconfig.php');
-?>
+@extends('layouts.principal_nav')
 @section('content')
-<div class="flex-column">
-    <div class="row">
-        <div class="col-lg-12">
-            <?php
-            @$info=$_GET['info'];
-            if($info!="")
-            {
+<link rel="stylesheet" href="{{asset('css/loading.css')}}">
+    <div>
+        <button id="cse" type="button" value="1" class="btn btn-light sel_btn">CSE</button>
+        <button id="ece" type="button" value="2" class="btn btn-danger sel_btn">ECE</button>
+        <button id="mech" type="button" value="3" class="btn btn-danger sel_btn">MECH</button>
+        <button id="civil" type="button" value="4" class="btn btn-danger sel_btn">CIVIL</button>
+        <button id="eee" type="button" value="5" class="btn btn-danger sel_btn">EEE</button>
+        <button id="mba" type="button" value="6" class="btn btn-danger sel_btn">MBA</button>
 
-                if($info=="faculty_wise_cse")
-                {
-                    $_SESSION['dept_id']=1;
-                    include('faculty_wise_feedback.php');
-                }
-                else if($info=="faculty_wise_ece")
-                {
-                    $_SESSION['dept_id']=2;
-                    include('faculty_wise_feedback.php');
-                }
-                else if($info=="faculty_wise_mech")
-                {
-                    $_SESSION['dept_id']=3;
-                    include('faculty_wise_feedback.php');
-                }
-                else if($info=="faculty_wise_civil")
-                {
-                    $_SESSION['dept_id']=4;
-                    include('faculty_wise_feedback.php');
-                }
-                else if($info=="faculty_wise_eee")
-                {
-                    $_SESSION['dept_id']=5;
-                    include('faculty_wise_feedback.php');
-                }
-                else if($info=="faculty_wise_mba")
-                {
-                    $_SESSION['dept_id']=6;
-                    include('faculty_wise_feedback.php');
-                }
-                if($info=="class_wise_cse")
-                {
-                    $_SESSION['dept_id']=1;
-                    include('class_wise_feedback.php');
-                }
 
-            else if($info=="class_wise_cse")
-            {
-                $_SESSION['dept_id']=1;
-                include('class_wise_feedback.php');
-            }
-
-                else if($info=="class_wise_ece")
-                {
-                    $_SESSION['dept_id']=2;
-                    include('class_wise_feedback.php');
-                }
-                else if($info=="class_wise_mech")
-                {
-                    $_SESSION['dept_id']=3;
-                    include('class_wise_feedback.php');
-                }
-                else if($info=="class_wise_civil")
-                {
-                    $_SESSION['dept_id']=4;
-                    include('class_wise_feedback.php');
-                }
-                else if($info=="class_wise_eee")
-                {
-                    $_SESSION['dept_id']=5;
-                    include('class_wise_feedback.php');
-                }
-                else if($info=="class_wise_mba")
-                {
-                    $_SESSION['dept_id']=6;
-                    include('class_wise_feedback.php');
-                }
-
-                else if($info=="statistics")
-                {
-                    include('statistics.php');
-                }
-
-                else if($info=="update_password")
-                {
-                    include('update_password.php');
-                }
-            }
-            else
-            {
-                include('dashboard_home.php');
-            }
-            ?>
-
+    </div>
+    <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center><div class="loader"></div></center>
+                    <center><h2>Loading...</h2></center>
+            </div>
         </div>
     </div>
-</div>
+    </div>
+    <div id="chartContainer" style="height: 100%; width: 100%;"></div>
+
+    <script>
+        $(document).ready(function () {
+            $(".modal").hide();
+            var d1=[];var d2=[];
+
+            $.ajax(
+                {
+                    type:'POST',
+                    url:"{{Route('principal.ajax_dashboard')}}",
+                    data:{
+                        dept_id:1,
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    beforeSend:function(){
+                        $(".modal").modal();
+                    },
+                    success:function (response) {
+
+                       d1=response.one;
+                       d2=response.two;
+
+                        CanvasJS.addColorSet("barcolors",
+                            [
+                                "#185BD8 ",
+                                "#22C1F0 ",
+                            ]);
+
+                        var chart = new CanvasJS.Chart("chartContainer", {
+                            animationEnabled: true,
+                            width:(screen.width-200),
+                            height:(screen.height-200),
+
+                            colorSet: "barcolors",
+
+                            title:{
+
+                                backgroundColor: "#D6EAF8",
+                                fontFamily: "Times New Roman",
+                                text: "Department of"
+                            },
+                            animationDuration: 2000,
+
+
+
+                            exportEnabled: true,
+                            axisX:{
+                                interval:1
+                            },
+                            axisY2:{
+                                interlacedColor: "rgba(1,77,101,.2)",
+                                gridColor: "rgba(1,77,101,.1)",
+                                title: "Average Of All Faculty"
+                            },
+                            data: [
+                                {
+                                    type: "bar",
+                                    dataPoints: d1
+                                },
+                                {
+                                    type: "bar",
+                                    dataPoints:d2
+                                },
+
+                            ]
+
+                        });
+                        $(".modal").modal('hide');
+                        chart.render();
+                    }
+
+                }
+            );
+            $(".sel_btn").on('click',function (e) {
+                e.preventDefault();
+                var id=this.id;
+                var dept_id=$("#"+id).val();
+                $(".sel_btn").removeClass("btn-light");
+                $(".sel_btn").removeClass("btn-danger");
+                $(".sel_btn").addClass("btn-danger");
+                $("#"+id).addClass("btn-light").removeClass("btn-danger");
+                $.ajax(
+                    {
+                        type:'POST',
+                        url:"{{Route('principal.ajax_dashboard')}}",
+                        data:{
+                            dept_id:dept_id,
+                            "_token": "{{ csrf_token() }}"
+                        },
+                        beforeSend:function(){
+                            $(".modal").modal();
+                        },
+                        success:function (response) {
+
+                            d1=response.one;
+                            d2=response.two;
+
+                            CanvasJS.addColorSet("barcolors",
+                                [
+                                    "#185BD8 ",
+                                    "#22C1F0 ",
+                                ]);
+
+                            var chart = new CanvasJS.Chart("chartContainer", {
+                                animationEnabled: true,
+                                width:(screen.width-200),
+                                height:(screen.height-200),
+
+                                colorSet: "barcolors",
+
+                                title:{
+
+                                    backgroundColor: "#D6EAF8",
+                                    fontFamily: "Times New Roman",
+                                    text: "Department of"
+                                },
+                                animationDuration: 2000,
+
+
+
+                                exportEnabled: true,
+                                axisX:{
+                                    interval:1
+                                },
+                                axisY2:{
+                                    interlacedColor: "rgba(1,77,101,.2)",
+                                    gridColor: "rgba(1,77,101,.1)",
+                                    title: "Average Of All Faculty"
+                                },
+                                data: [
+                                    {
+                                        type: "bar",
+                                        dataPoints: d1
+                                    },
+                                    {
+                                        type: "bar",
+                                        dataPoints:d2
+                                    },
+
+                                ]
+
+                            });
+                            $(".modal").modal('hide');
+                            chart.render();
+                        }
+
+                    }
+                );
+
+            });
+
+
+        });
+    </script>
 @endsection

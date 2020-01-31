@@ -1,5 +1,4 @@
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 
@@ -7,12 +6,16 @@
     <link href="{{asset('img/miet.png')}}" rel="icon">
     <title>FEEDBACK FORM</title>
     <link rel="stylesheet" href="{{asset('css/font-awesome.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('css/loading.css')}}">
+
 
     <!--<link href="../css/star-rating.css" media="all" rel="stylesheet" type="text/css"/>
     <!--suppress JSUnresolvedLibraryURL -->
     <script src="{{asset('js/jquery.min.js')}}"></script>
     <script src="{{asset('js/toastr.min.js')}}"></script>
     <script src="{{asset('js/jquery_form.js')}}"></script>
+    <script src="{{asset('vendor/bootstrap/bootstrap-3.3.7/dist/js/bootstrap.min.js')}}"></script>
+
 
     <!-- <script src="../js/star-rating.js" type="text/javascript"></script>-->
     <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
@@ -37,13 +40,13 @@
 </div>
 
 <div class="navbar_miet float-left ">
-    <a href="dashboard.php"><i class="fa fa-home" aria-hidden="true"></i> HOME </a>
+    <a href="{{Route('user.dashboard')}}"><i class="fa fa-home" aria-hidden="true"></i> HOME </a>
     <div class="subnav_miet" style="float: right">
             <a href="{{Route('user.logout')}}"><i class="fa fa-sign-out" aria-hidden="true"></i>SignOut</a>
         </div>
 </div>
     <br>
-    <form method="post" action="{{Route('user.submit_feedback')}}">
+    <form method="post" id="f" action="{{Route('user.submit_feedback')}}">
 <fieldset>
     @csrf
         <div class="row row d-flex p-3 bg-secondary">
@@ -80,6 +83,17 @@
 
         </div>
     </form>
+
+<div class="modal" id="loading" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <center><div class="loader"></div></center>
+                <center><h2>Submiting...</h2></center>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
 
@@ -94,12 +108,16 @@
      });
     $(document).ready(function () {
         toastr.warning("Select Any Subject!!");
+        $("#loading").modal("hide");
     });
+        $("form").submit(function () {
+            $("#loading").modal();
+        });
 
            $('#subsel').on('change',function () {
+
                var subj_id = $(this).val();
                 if(subj_id==="0"){
-                    alert("Hello");
                     toastr.error('Select Any Subject!!');
                 }else{
                var ar = subj_id.split("-");
@@ -143,7 +161,7 @@
     toastr.options.preventDuplicates = true;
     toastr.options.extendedTimeOut = 60;
     //toastr.options.progressBar = true;
-    toastr.options.positionClass='toast-top-center';
+    toastr.options.positionClass='toast-bottom-center';
     @foreach ($errors->all() as $error)
     toastr.error("{{$error}}");
     @endforeach

@@ -31,8 +31,6 @@ class HodLoginController extends Controller
             Session::flash('error','Invalid Credentials');
         }
 
-
-
         return redirect()->back();
     }
     public function logout() {

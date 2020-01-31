@@ -1,102 +1,199 @@
-<html>
-<?php
-include('../dbconfig.php');
-include('../admin/Admin_Class.php');
-$time_table_obj=new admin_ns\Admin_Class($conn);
-if(!(isset($_SESSION['prev_class_id']))){
-    $_SESSION['prev_class_id']="";
-    $_SESSION['prev_class_name']="";}
-?>
-<?php
+@extends('layouts.admin_nav')
+@section('content')
 
-extract($_POST);
-if(isset($set_table)) {
-    if ($set_table == "") {
-    } elseif ($_POST['classSelect'] == "" ) {
-    } else {
-        $_SESSION['prev_class_id'] = $_POST['classSelect'];
-        $prev_id = $_SESSION['prev_class_id'];
-        $q22 = mysqli_query($conn, "select name from classes where id=$prev_id");
-        $q23 = mysqli_fetch_array($q22);
-        $_SESSION['prev_class_name'] = $q23[0];
-    }
-}
-?>
-<head>
-    <script src="{{asset('lib/jquery/jquery.min.js')}}"></script>
+    <div class="jumbotron">
+        <form method="POST" action="{{action('HodController@scheduler')}}">
+            @csrf
+            {{method_field('POST')}}
+            <div class="row row d-flex p-3 bg-secondary">
+                <div style="text-align: center;padding-top: 4px;padding-left:22px;font-size:16px" class="col-md-2">
+                    <label for="selcls" style="font-family: 'Arial';font-size: 18px" >SELECT CLASS</label></div>
+                <div class="col-md-6">
+                    <select class="form-control mdb-select md-form chosen" id="selcls" name="class_id" required>
+                        @foreach($classes as $class)
+                            @if(Session('prev_class_id')==$class->id)
+                                <option  value="{{$class->id}}" selected>
+                                    {{$class->name}}
+                                </option>
+                            @else
+                            <option  value="{{$class->id}}">
+                                {{$class->name}}
+                            </option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary btn-md" id="Refresh">SHOW</button>
 
-    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
-    <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
-</head>
-<body>
-<div class="jumbotron">
-    <form method="post">
-        <div class="row row d-flex p-3 bg-secondary">
-            <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
-                <label for="clsel" style="font-size: 18px;font-family: Arial;">SELECT CLASS</label></div>
-            <div class="col-md-10">
-                <select class="form-control mdb-select md-form chosen" id="clsel" name="classSelect" >
-                    <?php
-                    echo $time_table_obj->Class_lists2($_SESSION['dept_id'],$_SESSION['prev_class_id'],$_SESSION['prev_class_name']);
-                    ?>
-                </select></div>
-        <br/>
+                </div>
+            </div>
 
-            <br/><br/><br/><br/>
-        </div>
-        <div class="row d-flex p-3 bg-secondary"><center><input type="submit" name="set_table" value="Show"> </center></div>
-    </form></div>
-<div class="row d-flex p-3 bg-secondary">
-    <div class="col-lg-12">
+        </form></div>
+<div class="float-right">
+    <button type="button" class="btn btn-success btn-md"
+                data-toggle="modal" data-target="#AddModal">ADD NEW</button>
+
+</div>
+    <div id ="studenttable" class="col-lg-12 col-md-6 ">
         <table class='table table-responsive table-bordered table-striped table-hover' style='margin:15px;'>
-            <tr class='info'>
-                <th class='text-capitalize text-dark info'> S.No </th>
-                <th class='text-capitalize text-dark info'>CLASS NAME </th>
+            <tr class='primary' >
+                <th class='text-capitalize text-dark info'>S.NO </th>
+                <th class='text-capitalize text-dark info'>CLASS NAME</th>
                 <th class='text-capitalize text-dark info'>SUBJECT NAME</th>
-                <th class='text-capitalize text-dark info'>FACULTY NAME</th>
-                <th class='text-capitalize text-dark info'>DELETE</th>
+                <th class='text-capitalize text-dark info' >FACULTY NAME</th>
+                <th class='text-capitalize text-dark info' >EDIT</th>
+                <th class='text-capitalize text-dark info' >DELETE</th>
 
             </tr>
-            <?php
-            extract($_POST);
-            if(isset($set_table)) {
-                if ($set_table == "") {
-                    echo "<script>alert('Select any Option!!');</script>";
-                }
-                elseif ($_POST['classSelect']==""){     echo "<script>alert('Select any Class!!');</script>";}
-                else {
-                    $_SESSION['prev_class_id']=$_POST['classSelect'];
-                    $prev_id=$_SESSION['prev_class_id'];
-                    $q22=mysqli_query($conn,"select name from classes where id=$prev_id");
-                    $q23=mysqli_fetch_array($q22);
-                    $_SESSION['prev_class_name']=$q23[0];
-                    echo $time_table_obj->show_time_table($_POST['classSelect']);
-                }
-            }
-            ?>
+            @if((@$time_table)!=NULL)
+                @foreach($time_table->subjects as $index=>$t)
+                    <tr>
+                        <td>{{($index+1)}}</td>
+                        <td>{{$time_table->name}}</td>
+                        <td>{{$t->name}}</td>
+                        <td>{{$t->faculty->name}}</td>
+                        <td><button type="button" class="btn btn-primary btn-md"
+                                    data-toggle="modal" data-target="#EditModal{{$index}}">Edit</button></td>
+
+                        <td><button type="button" class="btn btn-danger btn-md"
+                                    data-toggle="modal" data-target="#DeleteModal{{$index}}">Delete</button></td>
+
+                        <div class="modal fade" id="EditModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                    <form method="POST" action="{{action('HodController@edit_subject_alloc')}}" >
+                                        @csrf
+                                        {{method_field('POST')}}
+                                        <input type="hidden" value="{{$t->pivot->id}}" name="subj_alloc_id">
+                                        <div class="modal-body">
+                                            <label>Faculty Name</label>
+                                            <select class="chosen form-control" style="width: 100%" name="faculty_name" required>
+                                                <option value="{{$t->faculty->id}}" selected>{{$t->faculty->name}}</option>
+                                                @foreach($faculties as $faculty)
+
+                                                    <option  value="{{$faculty->id}}">
+                                                        {{$faculty->name}}
+                                                    </option>
+
+                                                @endforeach
+                                            </select>
+                                            <br/><br/>
+                                            <label>Subject Name</label>
+                                            <br/><br/>
+                                            <select class="chosen form-control" style="width: 100%" name="subject_name" required>
+                                                <option value="{{$t->id}}" selected>{{$t->name}}</option>
+                                                @foreach($subjects as $subject)
+
+                                                    <option  value="{{$subject->id}}">
+                                                        {{$subject->name}}
+                                                    </option>
+
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button id="submit_edit" type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="modal fade red" id="DeleteModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                    <form method="POST" action="{{action('HodController@delete_subject_alloc')}}" >
+                                        @csrf
+                                        {{method_field('POST')}}
+                                        <input type="hidden" value="{{$t->pivot->id}}" name="subj_alloc_id">
+                                        <div class="modal-body">
+                                            <p>Are You Sure , You Want to Delete <br/> Subject : {{$t->name}}</p>
+                                            <br/>
+                                            <p>Faculty: {{$t->faculty->name}}</p>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button id="submit_del" type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
+                    @endforeach
+                @endif
+
+
         </table>
     </div>
-</div>
+    <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form method="POST" action="{{action('HodController@add_subject_alloc')}}" >
+                    @csrf
+                    {{method_field('POST')}}
+                    <div class="modal-body">
+                        <input type="hidden" value="{{Session::get('prev_class_id')}}" name="selected_class_id">
+                        <div class="form-group">
+                        <label for="subject_id">SUBJECT NAME : </label>
+                        <select class="chosen form-control" style="width: 100%" name="subject_id" required>
+                            <option value="" selected></option>
+                            @foreach($subjects as $subject)
 
-</body>
-</html>
-<script type="text/javascript">
-    function delete_subj_alloc(id) {
-        if (id) {
-            $.ajax(
-                {
-                    type: 'post',
-                    url: 'ajax_delete_subj_alloc.php',
-                    data: {id:id},
-                    success: function (response) {
-                        alert(response);
-                        location.reload();
-                    }
+                                    <option  value="{{$subject->id}}">
+                                        {{$subject->name}}
+                                    </option>
 
-                }
-            );
-        }
-    }
-    $(".chosen").select2();
-</script>
+                            @endforeach
+                        </select>
+                        </div>
+                            <br/>
+                        <div class="form-group">
+                            <label for="faculty_id">FACULTY NAME : </label>
+                        <select class="chosen form-control" style="width: 100%" name="faculty_id" required>
+                            <option value="" selected></option>
+                            @foreach($faculties as $faculty)
+
+                                <option  value="{{$faculty->id}}">
+                                    {{$faculty->name}}
+                                </option>
+
+                            @endforeach
+                        </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button id="submit_del" type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(".chosen").select2();
+
+        </script>
+
+@endsection

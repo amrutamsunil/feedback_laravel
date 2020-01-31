@@ -39,7 +39,6 @@ if(isset($save))
                     <span class="symbol-input100">
 							<span class="lnr lnr-lock"></span>
 						</span>
-                </div>
 
                 <div class="container-login100-form-btn p-t-25">
                     <button  type="submit" name="save" class="login100-form-btn">
@@ -51,7 +50,7 @@ if(isset($save))
                     echo "<font color='red'>".@$err."</font>";
                     ?>
                 </div>
-
+                </div>
             </form>
         </div>
     </div>

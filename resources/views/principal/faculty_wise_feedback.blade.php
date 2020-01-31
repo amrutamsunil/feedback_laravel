@@ -1,68 +1,111 @@
-<?php
-include ('../dbconfig.php');
-include ('../admin/Admin_Class.php');
-$admin_obj=new admin_ns\Admin_Class($conn);
-?>
-<html>
-<head>
-    <script src="{{asset('lib/jquery/jquery.min.js')}}"></script>
-    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
-    <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
-    <style>
-        .sunil_custom_pdf {
-            background-image: url( "{{asset('images/PDF-icon-small-231x300.png')}}" ) ;
-            background-position: center;
-            background-size: contain;
-            background-repeat: no-repeat;
-            display: block;
-            height: 80px;
-            width: 80px;
-        }
-
-    </style>
-
-</head>
-<body style="overflow-x: hidden">
-<br/><br/>
-<div >
-    <form method="post"  action="pdf_facultywise_report.php">
-        <div class="row  d-flex p-3 bg-secondary">
-            <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
-                <label for="stf">Select Faculty</label></div>
-            <div class="col-md-8">
-                <select class="form-control mdb-select md-form chosen" id="stf" name="staffselect" required>
-                    <?php
-                    echo $admin_obj->faculty_lists($_SESSION['dept_id']);
-                    ?>
-                </select></div>
-            <div class="col-md-2">
-                <input name="go" type="submit" value="" class="sunil_custom_pdf"/></div>
-
+@extends('layouts.principal_nav')
+@section('content')
+    <div class="jumbotron">
+        <form method="post" action="{{Route('principal.pdf_faculty_wise_report')}}">
+            @csrf
+            <div class="row row d-flex p-3 bg-secondary">
+                <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
+                    <label for="dept" style="font-size: 18px;font-family: Arial;">SELECT DEPARTMENT</label></div>
+                <div class="col-md-8">
+                    <select class="form-control mdb-select md-form chosen" id="dept" name="dept_select" required>
+                        <option value="">CHOOSE A DEPARTMENT</option>
+                        @foreach($departments as $dept)
+                            <option value="{{$dept->id}}">{{$dept->short}}</option>
+                        @endforeach
+                    </select></div>
+            </div>
+            <br/>
+            <div class="row  d-flex p-3 bg-secondary">
+                <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
+                    <label for="stf" style="font-family: Arial;font-size: 18px">SELECT FACULTY</label></div>
+                <div class="col-md-8">
+                    <select class="form-control mdb-select md-form chosen" id="stf" name="faculty_id" required>
+                        <option value="">Select Any Faculty</option>
+                    </select></div>
+                <div class="col-md-2">
+                    <input name="go" type="submit" id="pdfb" value="" class="sunil_custom_pdf"/></div>
+            </div>
+        </form>
+    </div>
+    <div class="modal" id="loading" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center><div class="loader"></div></center>
+                    <center><h2>Loading...</h2></center>
+                </div>
+            </div>
         </div>
-    </form>
-</div>
+    </div>
+    <div id ="facultytable" class="col-lg-12 col-md-6 ">
+    </div>
+    <script>
+        $(".chosen").select2();
+        $("#pdfb").on('click',function () {
+            toastr.success("Downloading...");
+        });
+        $(document).ready(
+            function () {
+                $("#pdfb").hide();
+                toastr.warning("Choose a Department");
 
-<div id ="facultytable" class="col-lg-12 col-md-6 ">
-</div>
-<script>
-    $(".chosen").select2();
-    $('#stf').on('change',function () {
-        var staff_selected=$(this).val();
-        if(staff_selected) {
-            $.ajax({
-                type:'post',
-                url:'../admin/ajax_faculty_report.php',
-                data:"staff_id="+staff_selected,
-                success:function (response)
-                {
-                    $('#facultytable').html(response);
-                }
+                $('#dept').on('change',function () {
+                    var dept=$(this).val();
+                    if(dept){
+                        $.ajax({
+                            type:'POST',
+                            dataType: "json",
+                            url:"{{Route('principal.dept_faculty')}}",
+                            data:{dept:dept,
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            success:function(data) {
 
-            });
-        }
-    });
-</script>
-</body>
-</html>
+                                $('#stf').html('<option selected="selected" value="">Select Class</option>');
+                                $.each(data, function(key, value) {
+                                    console.log('key :'+ key + '  value :'+value);
+                                    $('#stf').append('<option value="'+key+'">'+value+'</option>');
+                                });
+                                $("#pdfb").show();
+
+                            }
+                        });
+                    }
+                    else{
+                        $('#stf').html('<option value="">Select Batch First</option>');
+                    }
+                });
+
+            }
+        );
+        $('#stf').on('change',function () {
+            var staff_selected=$(this).val();
+            if(staff_selected) {
+                $.ajax({
+                    type:'POST',
+                    url:'{{Route('principal.ajax_faculty_wise')}}',
+                    data:{
+                        faculty_id:staff_selected,
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    beforeSend:function(){
+                      $("#loading").modal();
+                    },
+                    success:function (response)
+                    {
+                        $('#facultytable').html(response);
+                        $("#loading").modal('hide');
+                    }
+
+                });
+            }else{
+                toastr.warning("Choose a department");
+            }
+
+
+
+        });
+
+    </script>
+@endsection
 

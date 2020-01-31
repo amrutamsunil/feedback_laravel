@@ -50,10 +50,10 @@
                 <li class="menu-has-children"><a href="#">LOGIN</a>
                     <ul>
                         <li><a href="{{Route('user.loginPage')}}">STUDENT</a></li>
-                        <li><a href="principal">DIRECTOR</a></li>
-                        <li><a href="principal">PRINCIPAL</a></li>
+                        <li><a href="{{Route('principal.loginPage')}}">DIRECTOR</a></li>
+                        <li><a href="{{Route('principal.loginPage')}}">PRINCIPAL</a></li>
                         <li><a href="{{Route('hod.loginPage')}}">HOD</a></li>
-                        <li><a href="faculty">FACULTY</a></li>
+                        <li><a href="{{Route('faculty.loginPage')}}">FACULTY</a></li>
                         <li><a href="developer">DEVELOPER</a></li>
                     </ul>
                 </li>
@@ -141,6 +141,7 @@
             <header class="section-header">
                 <h3>home</h3>
                 <p>
+                    <a href="{{Route('important')}}">Click to perform hashing</a>
                     The M.I.E.T society, founded by Er. A.Mohamed Yunus and Alhaj S.M.Hassan Mohamed during the year
                     1984,offers a high quality education in an underdeveloped rural and semi-urban region of
                     Tiruchirapalli, Tamil Nadu. This society runs three educational institutions, M.I.E.T Polytechnic
@@ -279,24 +280,24 @@
 
 
 <!-- JavaScript Libraries -->
-<script src="lib/jquery/jquery.min.js"></script>
-<script src="lib/jquery/jquery-migrate.min.js"></script>
-<script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="lib/easing/easing.min.js"></script>
-<script src="lib/superfish/hoverIntent.js"></script>
-<script src="lib/superfish/superfish.min.js"></script>
-<script src="lib/wow/wow.min.js"></script>
-<script src="lib/waypoints/waypoints.min.js"></script>
-<script src="lib/counterup/counterup.min.js"></script>
-<script src="lib/owlcarousel/owl.carousel.min.js"></script>
-<script src="lib/isotope/isotope.pkgd.min.js"></script>
-<script src="lib/lightbox/js/lightbox.min.js"></script>
-<script src="lib/touchSwipe/jquery.touchSwipe.min.js"></script>
+<script src="{{asset('lib/jquery/jquery.min.js')}}"></script>
+<script src="{{asset('lib/jquery/jquery-migrate.min.js')}}"></script>
+<script src="{{asset('lib/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<script src="{{asset('lib/easing/easing.min.js')}}"></script>
+<script src="{{asset('lib/superfish/hoverIntent.js')}}"></script>
+<script src="{{asset('lib/superfish/superfish.min.js')}}"></script>
+<script src="{{asset('lib/wow/wow.min.js')}}"></script>
+<script src="{{asset('lib/waypoints/waypoints.min.js')}}"></script>
+<script src="{{asset('lib/counterup/counterup.min.js')}}"></script>
+<script src="{{asset('lib/owlcarousel/owl.carousel.min.js')}}"></script>
+<script src="{{asset('lib/isotope/isotope.pkgd.min.js')}}"></script>
+<script src="{{asset('lib/lightbox/js/lightbox.min.js')}}"></script>
+<script src="{{asset('lib/touchSwipe/jquery.touchSwipe.min.js')}}"></script>
 <!-- Contact Form JavaScript File -->
-<script src="contactform/contactform.js"></script>
+<script src="{{asset('contactform/contactform.js')}}"></script>
 
 <!-- Template Main Javascript File -->
-<script src="js/main.js"></script>
+<script src="{{asset('js/main.js')}}"></script>
 
 </body>
 </html>

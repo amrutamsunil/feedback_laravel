@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="{{asset('js/jquery.min.js')}}"></script>
-    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-    <script src="{{asset('js/toastr.min.js')}}"></script>
     <meta charset="utf-8">
-    <link href="{{asset('img/miet.png')}}" rel="icon">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta id="token" name="token" content="{{csrf_token()}}">
+    <script src="{{asset('js/jquery.min.js')}}"></script>
+    <script src="{{asset('js/toastr.min.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{asset('css/loading.css')}}">
+    <!--<link rel="stylesheet" type="text/css" href="//asset('css/bootstrap.min.css')">-->
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/bootstrap/bootstrap-3.3.7/dist/css/bootstrap.min.css')}}">
+    <!--
+    <script src="//asset('css/bootstrap.min.js')}}"></script>-->
+    <script src="{{asset('vendor/bootstrap/bootstrap-3.3.7/dist/js/bootstrap.min.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
+    <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
     <style>
+
+        .sunil_custom_pdf {
+            background-image: url( {{asset('images/PDF-icon-small-231x300.png')}} ) ;
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: block;
+            height: 80px;
+            width: 80px;
+        }
         .vasanth {
             background-color: white;
             width: 300px;
@@ -21,13 +34,21 @@
             padding-right: 30% ;
             margin-left: 65%;
         }
+
+
     </style>
+    <script type="text/javascript" src="{{asset('js/canvasjs.js')}}"></script>
+    <link href="{{asset('img/miet.png')}}" rel="icon">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
 
     <title>
         HOD Dashboard
     </title>
 
-    <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
 
 
 
@@ -60,30 +81,28 @@
     <div class="subnav_miet">
         <button class="subnavbtn_miet"><i class="fa fa-graduation-cap" aria-hidden="true"></i> STUDENT <i class="fa fa-caret-down"></i></button>
         <div class="subnav_miet-content">
-            <a href="dashboard.php?info=display_student" style="margin-left:18%"><i class="fa fa-hand-o-right" aria-hidden="true"></i> Manage Student</a>
+            <a href="{{Route('hod.student_status')}}" style="margin-left:18%"><i class="fa fa-hand-o-right" aria-hidden="true"></i> Manage Student</a>
         </div>
     </div>
-    <a href="dashboard.php?info=time_table"><i class="fa fa-calendar" aria-hidden="true"></i>TIME TABLE</a>
-    <a href="dashboard.php?info=show_time_table"><i class="fa fa-calendar" aria-hidden="true"></i>SHOW TIME TABLE</a>
+    <a href="{{Route('hod.show_time_table_page')}}"><i class="fa fa-calendar" aria-hidden="true"></i>SHOW TIME TABLE</a>
     <div class="subnav_miet">
         <button class="subnavbtn_miet"><i class="fa fa fa-history" aria-hidden="true"></i> OLD RECORDS <i class="fa fa-caret-down"></i></button>
         <div class="subnav_miet-content">
-            <a href="dashboard.php?info=old_class_wise" style="margin-left:36%"><i class="fa fa-hand-o-right" aria-hidden="true"></i> Class-wise</a>
-            <a href="dashboard.php?info=old_faculty_wise"><i class="fa fa-hand-o-right" aria-hidden="true"></i> Faculty-wise</a>
+            <a href="{{Route('hod.show_old_class_wise')}}" style="margin-left:36%"><i class="fa fa-hand-o-right" aria-hidden="true"></i> Class-wise</a>
+            <a href="{{Route('hod.show_old_faculty_wise')}}"><i class="fa fa-hand-o-right" aria-hidden="true"></i> Faculty-wise</a>
 
         </div>
     </div>
 
     <div class="subnav_miet" style="float: right">
-        <a href="dashboard.php?info=update_password"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>
-        <a href="logout.php"><i class="fa fa-sign-out" aria-hidden="true"></i>SignOut</a>
+       <!-- <a href="dashboard.php?info=update_password"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>-->
+        <a href="{{Route('hod.logout')}}"><i class="fa fa-sign-out" aria-hidden="true"></i>SignOut</a>
     </div>
 </div>
 
 @yield('content')
 
 <!-- Bootstrap Core JavaScript -->
-<script src="{{asset('css/bootstrap.min.js')}}"></script>
 
 <!-- Metis Menu Plugin JavaScript -->
 <script src="{{asset('css/metisMenu.min.js')}}"></script>
@@ -95,7 +114,6 @@
 
 </body>
 <link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
-
 <script type='text/javascript'>
     toastr.options.closeDuration = 200;
     toastr.options.closeEasing = 'swing';
@@ -106,7 +124,7 @@
     toastr.options.preventDuplicates = true;
     toastr.options.extendedTimeOut = 60;
     //toastr.options.progressBar = true;
-    toastr.options.positionClass='toast-top-center';
+    toastr.options.positionClass='toast-bottom-center';
     @foreach ($errors->all() as $error)
     toastr.error("{{$error}}");
     @endforeach

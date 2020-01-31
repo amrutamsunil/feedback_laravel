@@ -25,9 +25,9 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $hidden = [
+    /*protected $hidden = [
         'password'
-    ];
+    ];*/
     public function classes(){
         return $this->belongsTo('App\Classes','class_id');
     }
@@ -37,6 +37,7 @@ class User extends Authenticatable
     public function feedbacks(){
         return $this->hasMany('App\Feedback','student_id');
     }
+
     /**
      * The attributes that should be cast to native types.
      *
