@@ -57,7 +57,6 @@
 
                                 $('#class_select').html('<option selected="selected" value="">Select Class</option>');
                                 $.each(data, function(key, value) {
-                                    console.log('key :'+ key + '  value :'+value);
                                     $('#class_select').append('<option value="'+key+'">'+value+'</option>');
                                 });
                                 $("#pdfb").show();

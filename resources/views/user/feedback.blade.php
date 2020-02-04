@@ -10,7 +10,7 @@
 
 
     <!--<link href="../css/star-rating.css" media="all" rel="stylesheet" type="text/css"/>
-    <!--suppress JSUnresolvedLibraryURL -->
+    <!suppress JSUnresolvedLibraryURL -->
     <script src="{{asset('js/jquery.min.js')}}"></script>
     <script src="{{asset('js/toastr.min.js')}}"></script>
     <script src="{{asset('js/jquery_form.js')}}"></script>

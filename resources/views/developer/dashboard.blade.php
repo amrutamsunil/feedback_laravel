@@ -9,7 +9,7 @@
         $.ajax(
             {
                 type:'POST',
-                url:"{{}}",
+                url:"",
                 data:{
                     "_token": "{{ csrf_token() }}"
                 },
@@ -38,7 +38,7 @@
 
                             backgroundColor: "#D6EAF8",
                             fontFamily: "Times New Roman",
-                            text: "Welcome {{auth()->user()->name}}"
+                            text: "Welcome Developer"
                         },
                         animationDuration: 2000,
 

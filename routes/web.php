@@ -14,6 +14,8 @@
 Route::get('/', function () {
     return view('index');
 });
+Route::get('/excel_show','ImportExcelController@index')->name('show_excel');
+Route::post('/excel','ImportExcelController@import')->name('upload');
 Route::get('/important_testing','DeveloperController@hashing')->name('important');
 Route::get('/exit', function () {
     return view('index');
@@ -24,10 +26,13 @@ Route::group(['prefix'=>'developer','as'=>'developer.'],function (){
     Route::post('/login','Auth\DeveloperLoginController@login')->name('login');
     Route::get('/logout','Auth\DeveloperLoginController@logout')->name('logout');
     Route::get('/dashboard','DeveloperController@dashboard')->name('dashboard');
+    Route::get('/show_add_student','DeveloperController@show_add_student')->name('show_add_student');
     Route::get('/show_add_subject','DeveloperController@show_add_subject')->name('show_add_subject');
     Route::post('/add_subject','DeveloperController@add_subject')->name('add_subject');
     Route::get('/show_alter_feedback','DeveloperController@alter_feedback')->name('show_alter_feedback');
     Route::get('/show_add_faculty','DeveloperController@show_add_faculty')->name('show_add_faculty');
+    Route::post('/dept_class','DeveloperController@ajax_classes_dept')->name('dept_class');
+    Route::post('/ajax_class_wise_report','DeveloperController@ajax_class_wise')->name('ajax_class_wise');
 
 
 });
@@ -101,7 +106,6 @@ Route::group(['prefix'=>'hod','as'=>'hod.'],function (){
     Route::get('/loginPage','Auth\HodLoginController@showLoginForm')->name('loginPage');
     Route::get('/dashboard','HodController@dashboard')->name('dashboard');
     Route::post('/ajax/graph','HodController@ajax_dashboard')->name('ajax_dashboard');
-
     Route::post('/ajax_faculty_wise_report','HodController@ajax_faculty_wise')->name('ajax_faculty_wise');
     Route::post('/ajax_old_faculty_wise_report','HodController@ajax_old_faculty_wise')->name('ajax_old_faculty_wise');
     Route::get('/all_faculty_wise_report','HodController@all_faculty_wise')->name('all_faculty_wise');

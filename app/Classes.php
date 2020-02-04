@@ -8,7 +8,7 @@ class Classes extends Model
 {
     protected $table="classes";
     protected $fillable=[
-        'name','semester','section','batch','isActive','dept_id'
+        'name','sem','sec','batch','isActive','department_id','id'
     ];
     public function subjects(){
        return $this->belongsToMany('App\Subject','subject_allocations','class_id','subject_id')->withPivot('faculty_id','id');

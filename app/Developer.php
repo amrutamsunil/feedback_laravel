@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 
 
 
-class Developer extends Model
+class Developer extends Authenticatable
 {
     protected $table="developer";
     protected $fillable=[
-       'username','password'
+       'username','password','id',
     ];
     protected $hidden=[
         'password'

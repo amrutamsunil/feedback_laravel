@@ -8,7 +8,7 @@ class Department extends Model
 {
     protected $table="departments";
     protected $fillable=[
-        'name','short'
+        'name','short','id'
     ];
     public function admins(){
         return $this->hasMany('App\Admin','dept_id');

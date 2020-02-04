@@ -9,7 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <script src="{{asset('js/jquery.min.js')}}"></script>
+    <script src="{{asset('js/toastr.min.js')}}"></script>
     <title>Admin Dashboard</title>
 
     <!-- Bootstrap Core CSS -->
@@ -28,6 +29,7 @@
     <link href="{{asset('vendor/css/nav.css')}}" rel="stylesheet">
 
 
+
 </head>
 
 <body style="overflow-y: scroll">
@@ -39,7 +41,7 @@
         <button class="subnavbtn_miet"><i class="fa fa fa-graduation-cap" aria-hidden="true"></i> MANAGE STUDENT <i class="fa fa-caret-down"></i></button>
         <div class="subnav_miet-content">
             <a href="{{Route("developer.show_add_student")}}" style="margin-left:8%"><i class="fa fa-hand-o-right" aria-hidden="true"></i> ADD STUDENT</a>
-            <a href="{{Route("developer.show_alter_feedback")}}"><i class="fa fa-hand-o-right" aria-hidden="true"></i> ALTER FEEDBACK SUBMISSION</a>
+            <a href="{{Route("show_excel")}}"><i class="fa fa-hand-o-right" aria-hidden="true"></i> ALTER FEEDBACK SUBMISSION</a>
         </div>
     </div>
     <div class="subnav_miet">
@@ -50,11 +52,11 @@
         </div>
     </div>
     <div class="subnav_miet" style="float: right">
-        <a href="update_password"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>
+        <a href=""><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>
         <a href="{{Route('developer.logout')}}"><i class="fa fa-sign-out" aria-hidden="true"></i>SignOut</a>
     </div>
     <a href="{{Route("developer.show_add_subject")}}"><i class="fa fa-angle-double-down" aria-hidden="true"></i> ADD SUBJECT </a>
-    <a href="{{Route("developer.promote")}}"><i class="fa fa-forward" aria-hidden="true"></i> PR0MOTE </a>
+    <a href="#"><i class="fa fa-forward" aria-hidden="true"></i> PR0MOTE </a>
 </div>
 
 @yield('content')
@@ -75,6 +77,7 @@
 
 </body>
 <link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
+
 <script type='text/javascript'>
     toastr.options.closeDuration = 200;
     toastr.options.closeEasing = 'swing';
@@ -85,16 +88,15 @@
     toastr.options.preventDuplicates = true;
     toastr.options.extendedTimeOut = 60;
     //toastr.options.progressBar = true;
-    toastr.options.positionClass='toast-bottom-center';
+    toastr.options.positionClass='toast-top-right';
     @foreach ($errors->all() as $error)
     toastr.error("{{$error}}");
     @endforeach
     @if(Session::has('success'))
     toastr.success("{{Session::get('success')}}");
-    @elseif(Session::has('Error'))
+    @elseif(Session::has('error'))
     toastr.error("{{Session::get('error')}}");
     @elseif(Session::has('info'))
     toastr.info("{{Session::get('info')}}");
     @endif
 </script>
-</html>

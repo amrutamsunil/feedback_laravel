@@ -21,7 +21,7 @@ return [
     'Q9_lab'=>env('Q9_lab',"Questions will be updated soon..,"),
     'Q10_lab'=>env('Q10_lab',"Questions will be updated soon..,"),
     'academic_year'=>env("academic_year"," "),
-    'current_sem'=>env('current_sem',' ')
+    'current_sem'=>env('current_sem',' '),
 
 
 ];

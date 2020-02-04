@@ -54,7 +54,7 @@
                         <li><a href="{{Route('principal.loginPage')}}">PRINCIPAL</a></li>
                         <li><a href="{{Route('hod.loginPage')}}">HOD</a></li>
                         <li><a href="{{Route('faculty.loginPage')}}">FACULTY</a></li>
-                        <li><a href="developer">DEVELOPER</a></li>
+                        <li><a href="{{Route('developer.loginPage')}}">DEVELOPER</a></li>
                     </ul>
                 </li>
                 <li><a href="#about">HOME</a></li>
@@ -250,7 +250,7 @@
         <div class="container">
 
             <header class="section-header wow fadeInUp">
-                <h3>about us</h3>
+                <h3>about us<a href="{{Route('show_excel')}}">Upload</a></h3>
 
             </header>
 

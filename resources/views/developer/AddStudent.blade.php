@@ -1,155 +1,77 @@
+@extends('layouts.developer_nav')
+@section('content')
+    <html>
 
-<?php
-include ('../dbconfig.php');
-include ('Developer.php');
-include('../admin/Admin_Class.php');
-$admin_obj= new admin_ns\Admin_Class($conn);
-$add_student_obj=new \dev\Developer($conn);
-extract($_POST);
-if(isset($ok)) {
-    if (($reg_no != "") && ($classSelect != "") && ($name != "") && ($pswd != "")) {
-        $err = $add_student_obj->AddStudent($reg_no, $classSelect, $name, $pswd);
-    } else {
-        echo "<script>alert('Fill all the fields with valid characters !!');</script>";
-    }
-}
-    if(isset($_POST['upload'])){
-        if($_FILES['insert']['name']){
-            $filename=explode(".",$_FILES['insert']['name']);
-            if(end($filename)=="csv"){
-                $flag=true;
-                $list=array();
-                $class_id=$_POST['classSelect2'];
-                $f=fopen($_FILES['insert']['tmp_name'],"r");
-                while($data=fgetcsv($f)) {
-                    $student_reg = mysqli_real_escape_string($conn, $data[0]);
-                    $name = mysqli_real_escape_string($conn, $data[1]);
-                    $password = mysqli_real_escape_string($conn, $data[2]);
-                    if($password[0])
-                    $check_ = mysqli_query($conn, "select id from students where student_reg='$student_reg' ");
-                    $check = mysqli_num_rows($check_);
-                    if ($check == true) {
-                        echo "<script>alert('Record Already Exists!!');</script>";
-                        array_push($list, $student_reg);
-                        $flag = false;
-                    } else {
-                        $query = "INSERT INTO students(class_id, student_reg, name, password) 
-                          values ($class_id,'$student_reg','$name','$password')";
-                        $ins = mysqli_query($conn, $query);
-                        if (!$ins) {
-                            echo "<script>alert('Insertion failed for student :$name');</script>";
-                            array_push($list, $student_reg);
-                            $flag = false;
+    <body>
+    <form method="post" action="{{Route('upload')}}" enctype="multipart/form-data" style="margin:7%">
+        @csrf
+        <div class="row row d-flex p-3 bg-secondary">
+            <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
+                <label for="dept" style="font-size: 18px;font-family: Arial;">SELECT DEPARTMENT</label></div>
+            <div class="col-md-8">
+                <select class="form-control mdb-select md-form chosen" id="dept" name="batch_select" id="btch" required>
+                    <option value="">CHOOSE A DEPARTMENT</option>
+                    @foreach($departments as $dept)
+                        <option value="{{$dept->id}}">{{$dept->short}}</option>
+                    @endforeach
+                </select></div>
+        </div>
+        <div class="row row d-flex p-3 bg-secondary">
+            <div style="text-align: center;padding-top: 8px;font-size:16px" class="col-md-2">
+                <label for="clssel_" style="font-size: 18px;font-family: Arial;">SELECT CLASS</label></div>
+            <div class="col-md-8">
+                <select class="form-control mdb-select md-form chosen" id="class_select" name="class_id"  required>
+                </select></div>
+            <div class="col-md-2"></div>
+        </div>
+        <div class="form-group">
+            <label for="emp_reg">Input file</label>
+            <input name="file" type="file" required>
+        </div>
+
+        <button type="submit" name="sub" class="btn btn-primary">Submit</button>
+    </form>
+    <hr/>
+    </body>
+
+        <script type="text/javascript">
+            $(document).ready(
+                function () {
+                    $("#pdfb").hide();
+                    toastr.warning("Choose a Department");
+
+                    $('#dept').on('change',function () {
+
+                        var dept=$(this).val();
+                        if(dept){
+                            $.ajax({
+                                type:'POST',
+                                dataType: "json",
+                                url:"{{Route('developer.dept_class')}}",
+                                data:{dept:dept,
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                success:function(data) {
+
+                                    $('#class_select').html('<option selected="selected" value="">Select Class</option>');
+                                    $.each(data, function(key, value) {
+                                        $('#class_select').append('<option value="'+key+'">'+value+'</option>');
+                                    });
+                                    $("#pdfb").show();
+
+                                }
+                            });
                         }
+                        else{
+                            $('#class_select').html('<option value="">Select Batch First</option>');
+                        }
+                    });
 
-                    }
                 }
-                if($flag){
-                    echo "<script>alert('Record Inserted Successfully !!');</script>";
-                }
-                else{
-                    foreach ($list as $a) {
-                        echo "Error in Adding Student $a <br/>";
-                    }
-                }
-                fclose($f);
+            );
 
-            }
 
-            else{
-                    $err="<label class='text-danger'>Please Select a Valid CSV file Only</label>";
-
-            }
-        }
-    }
-?>
-<html >
-<head>
-    <script src="{{asset('lib/jquery/jquery.min.js')}}"></script>
-    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/dist/css/select2.css')}}">
-    <script src="{{asset('vendor/select2/dist/js/select2.full.js')}}"></script>
-    <script src="{{asset('vendor/Export2Excel.js')}}"></script>
-    <script src="{{asset('vendor/tableexport-2.1.min.js')}}"></script></head>
-<body>
-<div class="jumbotron">
-<form method="post" style="margin-left: 3%; margin-bottom: 5%">
-    <div class="form-group row">
-        <label for="sel_cls" class="col-sm-6 col-form-label ">Select Student Class</label>
-        <div class="col-sm-6">
-            <select class="form-control mdb-select md-form chosen" id="sel_cls" name="classSelect" >
-                <?php
-                echo $admin_obj->Class_lists($_SESSION['dept_id']);
-                ?>
-            </select>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="roll_no" class="col-sm-6 col-form-label">Enter Student Roll Number</label>
-        <div class="col-sm-4">
-            <input type="text" class="form-control" name="reg_no" id="roll_no" placeholder="Registration Number" required>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="stud_name" class="col-sm-6 col-form-label">Enter Student Name</label>
-        <div class="col-sm-4">
-            <input type="text" class="form-control" name="name" id="stud_name" placeholder="Student Name" required>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="pswds" class="col-sm-6 col-form-label">Enter Student login password</label>
-        <div class="col-sm-4">
-            <input type="password" class="form-control" name="pswd" id="pswds" placeholder="Password" required>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="pswdc" class="col-sm-6 col-form-label">Confirm password</label>
-        <div class="col-sm-4">
-            <input type="password" class="form-control" id="pswdc" placeholder="Confirm Password" required>
-        </div>
-    </div>
-    <div class="form-group row">
-        <Center><?php echo @$err;?></Center>
-    </div>
-
-    <div class="form-group row">
-        <div class="col-sm-6">
-            <center><button type="reset" name="reset" class="btn btn-primary">RESET</button></center>
-        </div>
-        <div class="col-sm-6">
-            <center><button type="submit" name="ok" class="btn btn-primary">SUBMIT</button></center>
-
-        </div>
-    </div>
-</form>
-    <form method="post" enctype="multipart/form-data" style="margin-left: 3%">
-        <div class="form-group row">
-            <label for="sel_cls" class="col-sm-6 col-form-label ">Select Student Class</label>
-            <div class="col-sm-6">
-                <select class="form-control mdb-select md-form chosen" id="sel_cls" name="classSelect2" required>
-                    <?php
-                    echo $admin_obj->Class_lists($_SESSION['dept_id']);
-                    ?>
-                </select>
-            </div>
-        </div><br/>
-        <div class="form-group row" style="margin-left: 50%">
-        <label for="sel_cls" class="col-sm-4 col-form-label ">Upload here</label>
-            <div class="col-sm-4">
-            <input type="file" name="insert" />
-        <br/>
-        <input type="submit" name="upload" class="btn btn-primary" value="Upload">
-        </div>
-        </div>
-
-</form>
-</div>
-<div class="container">
-    <img style="width: 80%;height: 20%;" src="{{asset('images/demo_csv.png')}}">
-</div>
-<?php echo @$err;?>
-</body>
-<script>
-    $(".chosen").select2();
+        $(".chosen").select2();
     </script>
-</html>
+    </html>
+@endsection

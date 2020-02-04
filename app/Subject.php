@@ -8,7 +8,7 @@ class Subject extends Model
 {
     protected $table="subjects";
     protected $fillable=[
-        'name','subject_type','short'
+        'name','type','short','id'
     ];
     /*public function classes(){
        return $this->belongsToMany('App\Classes','subject_allocations','');

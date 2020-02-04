@@ -12,7 +12,7 @@ class Faculty extends Authenticatable
 {
     protected $table="faculties";
     protected $fillable=[
-        'employee_no','name','password','dept_id'
+        'employee_number','name','password','department_id','id'
     ];
     protected $hidden=[
         'password','created_at','updated_at',

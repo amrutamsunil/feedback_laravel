@@ -8,7 +8,7 @@ class Subject_Alloc extends Model
 {
     protected $table="subject_allocations";
     protected $fillable=[
-        'class_id','faculty_id','subject_id'
+        'class_id','faculty_id','subject_id','id'
     ];
     public $incrementing = true;
 

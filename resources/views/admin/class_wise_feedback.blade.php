@@ -32,7 +32,7 @@
         </div>
     </div>
 <div id ="classtable" class="col-lg-12 col-md-6 col-sm-6">
-</div>
+    </div>
 
 <script type="text/javascript">
     $(".chosen").select2();

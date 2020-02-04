@@ -10,6 +10,6 @@ class Principal extends Authenticatable
 {
     protected $table="principal";
     protected $fillable=[
-        'username','password'
+        'username','password','id'
     ];
 }

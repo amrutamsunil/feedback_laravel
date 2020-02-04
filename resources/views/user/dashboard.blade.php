@@ -22,13 +22,18 @@
            <div class="container">
                <div class="row">
                    <div class="col-lg-12 col-md-12">
-                       <div class="mu-service-area">
+
                            <div class="mu-service-single">
+
+                       <div class="mu-service-area">
+                           @if(config("buttons.phase_one_button")==="enable")
                                <a href="{{Route('user.phase',["1"])}}">
                                    <button class="button">PHASE 1</button>
                                </a>
                                <h2 style="color: black">SEM INITIAL</h2>
+                         @endif
                            </div>
+
 
                            <div class="mu-service-single">
 
@@ -36,11 +41,15 @@
                            </div>
 
                            <div class="mu-service-single">
+                               @if(config("buttons.phase_two_button")==="enable")
                                <a href="{{Route('user.phase',["2"])}}">
                                    <button class="button">PHASE 2</button>
                                </a>
                                <h2 style="color: black">SEM FINAL</h2>
+
+                               @endif
                            </div>
+
                        </div>
                    </div>
                </div>
