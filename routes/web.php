@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('index');
 });
 Route::get('/excel_show','ImportExcelController@index')->name('show_excel');
-Route::post('/excel','ImportExcelController@import')->name('upload');
+Route::post('/excel','ImportExcelController@import_feedback')->name('upload');
 Route::get('/important_testing','DeveloperController@hashing')->name('important');
 Route::get('/exit', function () {
     return view('index');

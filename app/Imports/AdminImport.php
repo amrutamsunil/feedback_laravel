@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Admin;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class AdminImport implements ToModel

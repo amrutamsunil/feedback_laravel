@@ -89,41 +89,54 @@ class FacultyController extends Controller
          <table id='class_wise' class='table table-bordered'>
         <tr class='primary'>
             <th class='text-capitalize text-dark info'>S.NO </th>
-           <th class='text-capitalize text-dark info'>  QUESTION </th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE I</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE II</th>
-           <th class='text-capitalize text-dark info'>AVG</th>
-        </tr>
-        ";
+           <th class='text-capitalize text-dark info'>  QUESTION </th>";
+        if(config("buttons.phase_one_report")==="enable") {
+            $output .= "<th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
+           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE I</th>";
+        }
+        if(config("buttons.phase_two_report")==="enable") {
+            $output . "<th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
+           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE II</th>";
+        }
+        if(config("buttons.phase_one_report")==="enable" &&
+            config("buttons.phase_two_report")==="enable") {
+            $output.="<th class='text-capitalize text-dark info' > AVG</th >";
+            }
+        $output.="</tr>";
         for($i=1;$i<=10;++$i) {
-            $p1 = Feedback::where('sa_id', '=',$request->sa_id)
+            $p1 = Feedback::where('sa_id', '=', $request->sa_id)
                 ->where('phase', '=', 1)
-                ->avg('q'.$i);
-            $c1=Feedback::where('sa_id', '=',$request->sa_id )
+                ->avg('q' . $i);
+            $c1 = Feedback::where('sa_id', '=', $request->sa_id)
                 ->where('phase', '=', 1)
                 ->count();
-            $c2=Feedback::where('sa_id', '=',$request->sa_id)
+            $c2 = Feedback::where('sa_id', '=', $request->sa_id)
                 ->where('phase', '=', 2)
                 ->count();
-            $p2 = Feedback::where('sa_id', '=',$request->sa_id)
+            $p2 = Feedback::where('sa_id', '=', $request->sa_id)
                 ->where('phase', '=', 2)
-                ->avg('q'.$i);
-            $output.="<tr>";
-            $output.="<td>".($i)."</td>";
-            $output.="<td>".$questions[($i-1)]."</td>";
-            $output.="<td>".$c1."/".$students_count."</td>";
-            $number1=(($p1)*10);
-            $output.="<td>".number_format($number1, 2, '.', '')."%</td>";
-            $output.="<td>".$c2."/".$students_count."</td>";
-            $number2=(($p2)*10);
-            $output.="<td>".number_format($number2, 2, '.', '')."</td>";
-            $avg=(($number1+$number2)/2);
-            $output.="<td>".number_format($avg, 2, '.', '')."%</td>";
+                ->avg('q' . $i);
+            $output .= "<tr>";
+            $output .= "<td>" . ($i) . "</td>";
+            $output .= "<td>" . $questions[($i - 1)] . "</td>";
+            if (config("buttons.phase_one_report") === "enable") {
+                $output .= "<td>" . $c1 . "/" . $students_count . "</td>";
+                $number1 = (($p1) * 10);
+                $output .= "<td>" . number_format($number1, 2, '.', '') . "%</td>";
+            }
+            if (config("buttons.phase_two_report") === "enable")
+                $output .= "<td>" . $c2 . "/" . $students_count . "</td>";
+            $number2 = (($p2) * 10);
+            $output .= "<td>" . number_format($number2, 2, '.', '') . "</td>";
+        }
+        if(config("buttons.phase_one_report")==="enable" &&
+            config("buttons.phase_two_report")==="enable") {
+            $avg = (($number1 + $number2) / 2);
+            $output .= "<td>" . number_format($avg, 2, '.', '') . "%</td>";
+        }
             $output.="</tr>";
 
-        }
+
         echo $output;
 
     }

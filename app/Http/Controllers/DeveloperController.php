@@ -18,7 +18,6 @@ class DeveloperController extends Controller
     public function __construct()
     {
         $this->middleware('auth:developer');
-
     }
     public function hashing(){
        /* $students=Faculty::all();

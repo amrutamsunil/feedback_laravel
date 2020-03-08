@@ -38,20 +38,19 @@
     </style>
 </head>
 <body>
-<div class="page-header">
-    <img src='{{asset('img/miet.png')}}' class="sunil_logo" height="80px" width="100px">
-    <center><h6><b>M.I.E.T ENGINEERING COLLEGE</b></h6></center>
-    <center><h6><b>STUDENT FEEDBACK ANALYSIS REPORT</b></h6></center>
-    <center><h6><b>FACULTY REPORT</b></h6></center><br/>
-    <center><h6><b>DEPARTMENT OF {{$dept->name}}</b></h6></center><br/>
-
-</div>
-@foreach($obj as $faculty)
+@foreach($faculty_obj as $faculty)
     @if($faculty['theory']['subjects']!=null||$faculty['lab']['subjects']!=null)
         <div class="no-break">
-        <div class="float-left">
-            <h6><b>FACULTY NAME : {{$faculty['faculty_name']}}</b></h6>
-        </div>
+            <div class="page-header">
+                <img src='{{asset('img/miet.png')}}' class="sunil_logo" height="80px" width="100px">
+                <center><h6><b>M.I.E.T ENGINEERING COLLEGE</b></h6></center>
+                <center><h6><b>STUDENT FEEDBACK ANALYSIS REPORT</b></h6></center>
+                <center><h6><b>FACULTY REPORT</b></h6></center><br/>
+                <center><h6><b>DEPARTMENT OF {{$dept->name}}</b></h6></center><br/>
+                <center><h6><b>ACADEMIC YEAR : {{config('questions.academic_year')}} ( {{config('questions.current_sem')}} )</b></h6></center>
+                <center><h6><b>FACULTY NAME : {{$faculty['faculty_name']}}</b></h6></center>
+            </div>
+
 
         <table class="table table-sm table-bordered">
 
@@ -60,11 +59,18 @@
                 <td >DEPT. NAME</td>
                 <td>CLASS NAME</td>
                 <td class="text-center" >SUBJECT NAME</td>
+                @if(config("buttons.phase_one_report")==="enable")
                 <td class="text-center" >STUDENTS COUNT</td>
                 <td class="text-center" >PHASE-I</td>
+                @endif
+                @if(config("buttons.phase_two_report")==="enable")
                 <td class="text-center" >STUDENTS COUNT</td>
                 <td class="text-center" >PHASE-II</td>
+                @endif
+                @if(config("buttons.phase_one_report")==="enable" &&
+                config("buttons.phase_two_report")==="enable")
                 <td class="text-center" >AVG</td>
+                    @endif
 
             </tr>
 
@@ -76,11 +82,19 @@
                         <td>{{$f->class->department_name}}</td>
                         <td>{{$f->class->name}}</td>
                         <td>{{$f->name}}</td>
+                        @if(config("buttons.phase_one_report")==="enable")
                         <td class="text-center">{{$f->phase1_student_count}} / {{$f->class->student_count}}</td>
                         <td class="text-center">{{$f->phase1_avg}}%</td>
+                        @endif
+                        @if(config("buttons.phase_two_report")==="enable")
                         <td class="text-center">{{$f->phase2_student_count}} / {{$f->class->student_count}}</td>
                         <td class="text-center">{{$f->phase2_avg}}%</td>
-                        <td class="text-center">{{(($f->phase1_avg + $f->phase2_avg)/2)}}%</td></tr>
+                        @endif
+                        @if(config("buttons.phase_one_report")==="enable" &&
+            config("buttons.phase_two_report")==="enable")
+                        <td class="text-center">{{(($f->phase1_avg + $f->phase2_avg)/2)}}%</td>
+                    @endif
+                    </tr>
                 @endif
             @endforeach
 
@@ -91,15 +105,26 @@
                         <td>{{$t->class->department_name}}</td>
                         <td>{{$t->class->name}}</td>
                         <td>{{$t->name}}</td>
+                        @if(config("buttons.phase_one_report")==="enable")
                         <td class="text-center">{{$t->phase1_student_count}} / {{$t->class->student_count}}</td>
                         <td class="text-center">{{$t->phase1_avg}}%</td>
+                        @endif
+                        @if(config("buttons.phase_two_report")==="enable")
                         <td class="text-center">{{$t->phase2_student_count}} / {{$t->class->student_count}}</td>
                         <td class="text-center">{{$t->phase2_avg}}%</td>
+                        @endif
+                        @if(config("buttons.phase_one_report")==="enable" &&
+      config("buttons.phase_two_report")==="enable")
                         <td class="text-center">{{(($t->phase1_avg + $t->phase2_avg)/2)}}%</td>
+                            @endif
                     </tr>
                 @endif
             @endforeach
         </table>
+            <div class="footer">
+                <h6 class="float-left">HOD</h6>
+                <h6 class="float-right">PRINCIPAL</h6>
+            </div>
         </div>
 
         @if($faculty['theory']['count']>0)
@@ -107,20 +132,34 @@
                 <tr class="bold_custom table-info table-bordered">
                     <td class="text-center" rowspan="3" >#</td>
                     <td class="text-center" rowspan="3" >QUESTIONS</td>
-
-
+                    @if(config("buttons.phase_one_report")==="enable" &&
+      config("buttons.phase_two_report")==="enable")
                     <td class="text-center" colspan="{{($faculty['theory']['count']*2)}}" >THEORY SUBJECTS</td>
+                        @else
+                        <td class="text-center" colspan="{{($faculty['theory']['count'])}}" >THEORY SUBJECTS</td>
+                        @endif
+
                 </tr>
 
                 <tr class="bold_custom table-info table-bordered">
                     @foreach($faculty['theory']['subjects'] as $k)
+                        @if(config("buttons.phase_one_report")==="enable" &&
+     config("buttons.phase_two_report")==="enable")
                         <td class="text-center" colspan="2" >{{$k->name}}</td>
-                    @endforeach
+                        @else
+                            <td class="text-center" colspan="1" >{{$k->name}}</td>
+                        @endif
+
+                            @endforeach
                 </tr>
                 <tr class="bold_custom table-info table-bordered">
                     @for($temp=1;$temp<=($faculty['theory']['count']);++$temp)
+                        @if(config("buttons.phase_one_report")==="enable")
                         <td class="text-center" >PHASE-I</td>
+                        @endif
+                    @if(config("buttons.phase_two_report")==="enable")
                         <td class="text-center" >PHASE-II</td>
+                            @endif
 
                     @endfor
                 </tr>
@@ -129,10 +168,15 @@
                 @for($j=1;$j<=10;++$j)
                     <tr>
                         <td>{{$j}}</td>
-                        <td>{{env("Q".$j)}}</td>
+                        <td>{{config("questions.Q".$j)}}</td>
                         @foreach($faculty['theory']['subjects'] as $z)
-                            <td class="text-center">{{$z['phase1_question_wise'][$j]}}</td>
-                            <td class="text-center">{{$z['phase2_question_wise'][$j]}}</td>                        @endforeach
+                            @if(config("buttons.phase_one_report")==="enable")
+                            <td class="text-center">{{$z['phase1_question_wise'][$j]}}/10</td>
+                            @endif
+                        @if(config("buttons.phase_two_report")==="enable")
+                            <td class="text-center">{{$z['phase2_question_wise'][$j]}}/10</td>
+                                    @endif
+                                    @endforeach
                     </tr>
                 @endfor
             </table>
@@ -142,20 +186,34 @@
                 <tr class="bold_custom table-info table-bordered">
                     <td class="text-center" rowspan="3" >#</td>
                     <td class="text-center" rowspan="3" >QUESTIONS</td>
-
-
+                    @if(config("buttons.phase_one_report")==="enable" &&
+   config("buttons.phase_two_report")==="enable")
                     <td class="text-center" colspan="{{($faculty['lab']['count']*2)}}" >LAB SUBJECTS</td>
+                        @else
+                        <td class="text-center" colspan="{{($faculty['lab']['count'])}}" >LAB SUBJECTS</td>
+                        @endif
+
                 </tr>
 
                 <tr class="bold_custom table-info table-bordered">
                     @foreach($faculty['lab']['subjects'] as $k)
+                        @if(config("buttons.phase_one_report")==="enable" &&
+   config("buttons.phase_two_report")==="enable")
                         <td class="text-center" colspan="2" >{{$k->name}}</td>
-                    @endforeach
+                        @else
+                            <td class="text-center" colspan="1" >{{$k->name}}</td>
+                        @endif
+
+                            @endforeach
                 </tr>
                 <tr class="bold_custom table-info table-bordered">
                     @for($temp=1;$temp<=($faculty['lab']['count']);++$temp)
+                        @if(config("buttons.phase_one_report")==="enable")
                         <td class="text-center" >PHASE-I</td>
+                        @endif
+                    @if(config("buttons.phase_two_report")==="enable")
                         <td class="text-center" >PHASE-II</td>
+                            @endif
 
                     @endfor
                 </tr>
@@ -164,27 +222,24 @@
                 @for($j=1;$j<=10;++$j)
                     <tr>
                         <td>{{$j}}</td>
-                        <td>{{env("Q".$j."_lab")}}</td>
+                        <td>{{config("questions.Q".$j."_lab")}}</td>
                         @foreach($faculty['lab']['subjects'] as $z)
-                            <td class="text-center">{{$z['phase1_question_wise'][$j]}}</td>
-                            <td class="text-center">{{$z['phase2_question_wise'][$j]}}</td>
+                            @if(config("buttons.phase_one_report")==="enable")
+                            <td class="text-center">{{$z['phase1_question_wise'][$j]}}/10</td>
+                            @endif
+                            @if(config("buttons.phase_two_report")==="enable")
+                            <td class="text-center">{{$z['phase2_question_wise'][$j]}}/10</td>
+                                @endif
                         @endforeach
                     </tr>
                 @endfor
             </table>
         @endif
 
-
-        <h6 class="float-left">REVIEW :</h6>
-        <textarea style="width: 100%;height: 10%;" ></textarea>
-
     @endif
 @endforeach
 
-<div>
-    <h6 class="float-left">HOD</h6>
-    <h6 class="float-right">PRINCIPAL</h6>
-</div>
+
 </body>
 
 </html>

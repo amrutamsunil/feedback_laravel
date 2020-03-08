@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Admin;
 use App\Classes;
 use App\Department;
+use App\Developer;
 use App\Faculty;
 use App\Feedback;
+use App\Principal;
 use App\User;
 use PDF;
 use Illuminate\Http\Request;
@@ -87,8 +90,8 @@ class PrincipalController extends Controller
         $faculties = Faculty::with(['subjects' => function ($query) use ($active_classes) {
             $query->whereIn('class_id', $active_classes);
         }])->where('id', '=', $request->faculty_id)->get();
-        $dept_name=Department::where('id','=',$request->dept_select);
-        $faculties[0]['department_name']=$dept_name->first()->name;
+        $dept_name=Department::where('id','=',$request->dept_select)->first();
+        $faculties[0]['department_name']=$dept_name->name;
         foreach ($faculties[0]->subjects as &$f) {
             $f['class'] = Classes::where('id', '=', $f->pivot->class_id)->first();
             $dep_name = Department::where('id', '=', $f->class->department_id)->first();
@@ -118,7 +121,7 @@ class PrincipalController extends Controller
             $f['phase2_student_count'] = $s2_count;
 
         }
-        $pdf=PDF::loadView('pdf_reports.faculty_wise_pdf',['faculty_obj'=>$faculties[0]])->setPaper('a4','portrait');
+        $pdf=PDF::loadView('pdf_reports.faculty_wise_pdf',['faculty_obj'=>$faculties[0],'dept'=>$dept_name])->setPaper('a4','landscape');
         return $pdf->download($dept_name->first()->short."-FACULTY_WISE.pdf");
 
     }
@@ -269,7 +272,7 @@ class PrincipalController extends Controller
 
         $obj=array();
 
-        $faculty=Faculty::where('department_id','=',$request->dept);
+        $faculty=Faculty::where('department_id','=',$request->dept)->get();
 
         foreach ($faculty as $f){
             $obj[$f->id]=$f->name;
@@ -389,13 +392,11 @@ public function pdf_question_wise_report(Request $request){
         $obj[$index]['theory']['count']=$theory_count;
         $obj[$index]['lab']['count']=$lab_count;
         foreach ($f->subjects as $i=>&$t) {
-
             $t['class'] = Classes::where('id', '=', $t->pivot->class_id)->first();
             $dep_name = Department::where('id', '=', $t->class->department_id)->first();
             $t['class']['department_name'] = $dep_name->short;
             $student_count = User::where('class_id', '=', $t->class->id)->count();
             $t['class']['student_count'] = $student_count;
-
             $p1_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 1)
                 ->avg('sum');
@@ -417,13 +418,11 @@ public function pdf_question_wise_report(Request $request){
             $t['phase2_question_wise']=$p2_q;
             if ($p1_avg == NULL) $p1_avg = 0;
             $t['phase1_avg'] = round($p1_avg);
-
             $p2_avg = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 2)
                 ->avg('sum');
             if ($p2_avg == NULL) $p2_avg = 0;
             $t['phase2_avg'] = round($p2_avg);
-
             $s1_count = Feedback::where('sa_id', '=', $t->pivot->id)
                 ->where('phase', '=', 1)->count();
             if ($s1_count == NULL) $s1_count = 0;
@@ -443,30 +442,14 @@ public function pdf_question_wise_report(Request $request){
     return $pdf->download("faculty_report_".$dept->short.".pdf");
 }
 public function test(){
-        $f=Faculty::find(20);
 
-    /*$students=Faculty::all();
-    foreach ($students as &$student){
-        $student->update(['password'=>bcrypt($student->password)]);
-    }*/
-
-    return view('dummy');
-}
-    public function all_class_report_page(){
-        $departments=Department::all();
-        return view('principal.all_classes_report')->with('departments',$departments);
-    }
-    public function pdf_all_classes_report(Request $request){
-        $this->validate($request,[
-            'dept_select'=>'required'
-        ]);
         $obj=array();
         //global $classes,$departments,$students,$feedbacks;
-        $dept=Department::where('id','=',$request->dept_select)->first();
+        $dept=Department::where('id','=',1)->first();
         $active_classes=Classes::where('isActive','=',1)
-            ->where('department_id','=',$request->dept_select);
-
-        foreach ($active_classes as $index=>&$c) {
+            ->where('department_id','=',1)->get();
+    $index=0;
+        foreach ($active_classes as &$c) {
             $obj[$index]['class_data']=$c;
             $obj[$index]['lab']['subjects']=array();
             $obj[$index]['theory']['subjects']=array();
@@ -477,7 +460,7 @@ public function test(){
             $obj[$index]['class_data']['student_count'] = $students_count;
             $theory_count=$subjects[0]->subjects->where('type','=','T')->count();
             $lab_count=$subjects[0]->subjects->where('type','=','L')->count();
-            $obj[$index]['theory']['count']=$theory_count;
+            $obj[$index]["theory"]['count']=$theory_count;
             $obj[$index]['lab']['count']=$lab_count;
 
 
@@ -522,6 +505,90 @@ public function test(){
                 if ($s2_count == NULL) $s2_count = 0;
                 $t['phase1_student_count'] = $s1_count;
                 $t['phase2_student_count'] = $s2_count;
+
+                if($t->type=="T") {
+                    array_push($obj[$index]["theory"]["subjects"],$t);
+                }else{
+                   array_push($obj[$index]["lab"]["subjects"],$t);
+                }
+
+            }
+            ++$index;
+        }
+
+
+
+
+
+    return view('dummy')->with('class_obj',$obj);
+}
+    public function all_class_report_page(){
+        $departments=Department::all();
+        return view('principal.all_classes_report')->with('departments',$departments);
+    }
+    public function pdf_all_classes_report(Request $request){
+        $this->validate($request,[
+            'dept_select'=>'required'
+        ]);
+        $obj=array();
+        //global $classes,$departments,$students,$feedbacks;
+        $dept=Department::where('id','=',$request->dept_select)->first();
+        $active_classes=Classes::where('isActive','=',1)
+            ->where('department_id','=',$request->dept_select)->get();
+
+        foreach ($active_classes as $index=>&$c) {
+            $obj[$index]['class_data']=$c;
+            $obj[$index]['lab']['subjects']=array();
+            $obj[$index]['theory']['subjects']=array();
+
+            $students = Classes::with('students')->where('id', '=', $c->id)->get();
+            $students_count = $students[0]->students->count();
+            $subjects = Classes::with(['subjects', 'faculties'])->where('id', '=', $c->id)->get();
+            $obj[$index]['class_data']['student_count'] = $students_count;
+            $theory_count=$subjects[0]->subjects->where('type','=','T')->count();
+            $lab_count=$subjects[0]->subjects->where('type','=','L')->count();
+            $obj[$index]['theory']['count']=$theory_count;
+            $obj[$index]['lab']['count']=$lab_count;
+
+
+            foreach ($subjects[0]->subjects as $index2 => &$t) {
+                $t['faculty'] = $subjects->first()->faculties->where('id', '=', $t->pivot->faculty_id)->first();
+                $p1_avg = Feedback::where('sa_id', '=', $t->pivot->id)
+                    ->where('phase', '=', 1)
+                    ->avg('sum');
+                if ($p1_avg == NULL)  {$p1_avg = 0;}
+                $t['phase1_avg'] = round($p1_avg);
+                $p2_avg = Feedback::where('sa_id', '=', $t->pivot->id)
+                    ->where('phase', '=', 2)
+                    ->avg('sum');
+
+                if ($p2_avg == NULL) {$p2_avg = 0;}
+                $t['phase2_avg'] = round($p2_avg);
+                $p1_q=array();
+                $p2_q=array();
+                for($g=1;$g<=10;++$g){
+                    $temp1=Feedback::where('sa_id', '=', $t->pivot->id)
+                        ->where('phase', '=', 1)
+                        ->avg("q".$g);
+                    $temp2=Feedback::where('sa_id', '=', $t->pivot->id)
+                        ->where('phase', '=', 2)
+                        ->avg("q".$g);
+                    if($temp1==null) {$temp1=0;}
+                    if($temp2==null) {$temp2=0;}
+                    $p1_q[$g]=round($temp1);
+                    $p2_q[$g]=round($temp2);
+                }
+                $t['phase1_question_wise']=$p1_q;
+                $t['phase2_question_wise']=$p2_q;
+
+                $s1_count = Feedback::where('sa_id', '=', $t->pivot->id)
+                    ->where('phase', '=', 1)->count();
+                if ($s1_count == NULL) $s1_count = 0;
+                $s2_count = Feedback::where('sa_id', '=', $t->pivot->id)
+                    ->where('phase', '=', 2)->count();
+                if ($s2_count == NULL) $s2_count = 0;
+                $t['phase1_student_count'] = $s1_count;
+                $t['phase2_student_count'] = $s2_count;
                 if($t->type=="T") {
                     array_push($obj[$index]['theory']['subjects'],$t);
                 }else{
@@ -530,10 +597,8 @@ public function test(){
 
             }
         }
-
-        //die($dept_obj->short);
         $pdf=PDF::loadView('pdf_reports.all_classes_pdf',['class_obj'=>$obj,'dept'=>$dept])->setPaper('a4','landscape');
-        return $pdf->download("classes_report_".$dept->short.".pdf");
+        return $pdf->download($dept->short.".pdf");
 
     }
 }

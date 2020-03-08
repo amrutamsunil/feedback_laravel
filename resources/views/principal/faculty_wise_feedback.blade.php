@@ -60,8 +60,7 @@
                                 "_token": "{{ csrf_token() }}"
                             },
                             success:function(data) {
-
-                                $('#stf').html('<option selected="selected" value="">Select Class</option>');
+                                $('#stf').html('<option selected="selected" value="">Select Faculty</option>');
                                 $.each(data, function(key, value) {
                                     console.log('key :'+ key + '  value :'+value);
                                     $('#stf').append('<option value="'+key+'">'+value+'</option>');
@@ -72,7 +71,7 @@
                         });
                     }
                     else{
-                        $('#stf').html('<option value="">Select Batch First</option>');
+                        $('#stf').html('<option value="">Select Department First</option>');
                     }
                 });
 

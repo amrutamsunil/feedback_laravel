@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Developer;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class DeveloperImport implements ToModel

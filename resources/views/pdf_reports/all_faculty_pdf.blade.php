@@ -39,6 +39,7 @@
     <center><h6><b>M.I.E.T ENGINEERING COLLEGE</b></h6></center>
     <center><h6><b>STUDENT FEEDBACK ANALYSIS REPORT</b></h6></center>
     <center><h6><b>FACULTY REPORT</b></h6></center><br/>
+    <center><h6><b>ACADEMIC YEAR : {{config('questions.academic_year')}} ( {{config('questions.current_sem')}} )</b></h6></center>
     <center><h6><b>DEPARTMENT OF {{$faculty_obj->department_name}}</b></h6></center><br/>
 
 </div>
@@ -54,12 +55,18 @@
         <th scope="col">DEPT. NAME</th>
         <th scope="col">CLASS NAME</th>
         <th class="text-center" scope="col">SUBJECT NAME</th>
+        @if(config("buttons.phase_one_report")==="enable")
         <th class="text-center" scope="col">STUDENTS COUNT</th>
         <th class="text-center" scope="col">PHASE-I</th>
+        @endif
+        @if(config("buttons.phase_two_report")==="enable")
         <th class="text-center" scope="col">STUDENTS COUNT</th>
         <th class="text-center" scope="col">PHASE-II</th>
+        @endif
+        @if(config("buttons.phase_one_report")==="enable" &&
+        config("buttons.phase_two_report")==="enable")
         <th class="text-center" scope="col">AVG</th>
-
+        @endif
     </tr>
     </thead>
     <tbody>
@@ -69,11 +76,18 @@
             <td>{{$f->class->department_name}}</td>
             <td>{{$f->class->name}}</td>
             <td>{{$f->name}}</td>
+            @if(config("buttons.phase_one_report")==="enable")
             <td class="text-center">{{$f->phase1_student_count}} / {{$f->class->student_count}}</td>
             <td class="text-center">{{$f->phase1_avg}}%</td>
+            @endif
+            @if(config("buttons.phase_two_report")==="enable")
             <td class="text-center">{{$f->phase2_student_count}} / {{$f->class->student_count}}</td>
             <td class="text-center">{{$f->phase2_avg}}%</td>
+            @endif
+            @if(config("buttons.phase_one_report")==="enable" &&
+            config("buttons.phase_two_report")==="enable")
             <td class="text-center">{{(($f->phase1_avg + $f->phase2_avg)/2)}}%</td>
+                @endif
         </tr>
     @endforeach
     </tbody>

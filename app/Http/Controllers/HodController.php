@@ -142,24 +142,40 @@ return response()->json($obj);
         <tr class='primary'>
             <th class='text-capitalize text-dark info'>S.NO </th>
            <th class='text-capitalize text-dark info'>SUBJECT NAME </th>
-           <th class='text-capitalize text-dark info'>FACULTY NAME</th>
+           <th class='text-capitalize text-dark info'>FACULTY NAME</th> ";
+        if(config("buttons.phase_one_report")==="enable") {
+            $output .= "
            <th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE I</th>
+           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE I</th>";
+        }
+        if(config("buttons.phase_two_report")==="enable") {
+            $output .= "
            <th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE II</th>
-           <th class='text-capitalize text-dark info'>AVG</th>
-        </tr>
-        ";
+           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE II</th>";
+        }
+        if(config("buttons.phase_one_report")==="enable" &&
+            config("buttons.phase_two_report")==="enable") {
+            $output .= "<th class='text-capitalize text-dark info'>AVG</th>";
+        }
+        $output.="</tr>";
+
         foreach ($subjects[0]->subjects as $index=>$subject){
             $output.="<tr>";
             $output.="<td>".($index+1)."</td>";
             $output.="<td>".$subject->name."</td>";
             $output.="<td>".$subject->faculty->name."</td>";
-            $output.="<td style='text-align: center'>".$subject->phase1_student_count." / ".$subjects->first()->student_count."</td>";
-            $output.="<td style='text-align: center'>".$subject->phase1_avg."% </td>";
-            $output.="<td style='text-align: center'>".$subject->phase2_student_count." / ".$subjects->first()->student_count."</td>";
-            $output.="<td style='text-align: center'>".$subject->phase2_avg."% </td>";
-            $output.="<td>".(($subject->phase1_avg + $subject->phase2_avg)/2)."% </td>";
+            if(config("buttons.phase_one_report")==="enable") {
+                $output .= "<td style='text-align: center'>" . $subject->phase1_student_count . " / " . $subjects->first()->student_count . "</td>";
+                $output .= "<td style='text-align: center'>" . $subject->phase1_avg . "% </td>";
+            }
+            if(config("buttons.phase_two_report")==="enable") {
+                $output .= "<td style='text-align: center'>" . $subject->phase2_student_count . " / " . $subjects->first()->student_count . "</td>";
+                $output .= "<td style='text-align: center'>" . $subject->phase2_avg . "% </td>";
+            }
+            if(config("buttons.phase_one_report")==="enable" &&
+                config("buttons.phase_two_report")==="enable") {
+                $output .= "<td>" . (($subject->phase1_avg + $subject->phase2_avg) / 2) . "% </td>";
+            }
             $output.="</tr>";
         }
         echo $output;
@@ -312,14 +328,20 @@ return response()->json($obj);
            <th class='text-capitalize text-dark info'>DEPARTMENT </th>
            <th class='text-capitalize text-dark info'>CLASS NAME</th>
            <th class='text-capitalize text-dark info' style='text-align: center'>SEMESTER</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>SUBJECT NAME</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE I</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
-           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE II</th>
-           <th class='text-capitalize text-dark info'>AVG</th>
-        </tr>
-        ";
+           <th class='text-capitalize text-dark info' style='text-align: center'>SUBJECT NAME</th>";
+        if(config("buttons.phase_one_report")==="enable"){
+           $output.="<th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
+           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE I</th>";
+            }
+        if(config("buttons.phase_two_report")==="enable") {
+            $output .= "<th class='text-capitalize text-dark info' style='text-align: center'>STUDENT COUNT</th>
+           <th class='text-capitalize text-dark info' style='text-align: center'>PHASE II</th>";
+        }
+        if(config("buttons.phase_one_report")==="enable" &&
+            config("buttons.phase_two_report")==="enable"){
+           $output.="<th class='text-capitalize text-dark info'>AVG</th>";
+            }
+        $output.="</tr>";
         foreach ($faculties[0]->subjects as $index=>$subject){
             $output.="<tr>";
             $output.="<td>".($index+1)."</td>";
@@ -327,11 +349,18 @@ return response()->json($obj);
             $output.="<td>".$subject->class->name."</td>";
             $output.="<td>".$subject->class->sem."</td>";
             $output.="<td>".$subject->name."</td>";
-            $output.="<td style='text-align: center'>".$subject->phase1_student_count." / ".$subject->class->student_count."</td>";
-            $output.="<td style='text-align: center'>".$subject->phase1_avg."% </td>";
-            $output.="<td style='text-align: center'>".$subject->phase2_student_count." / ".$subject->class->student_count."</td>";
-            $output.="<td style='text-align: center'>".$subject->phase2_avg."% </td>";
-            $output.="<td>".(($subject->phase1_avg + $subject->phase2_avg)/2)."% </td>";
+            if(config("buttons.phase_one_report")==="enable") {
+                $output .= "<td style='text-align: center'>" . $subject->phase1_student_count . " / " . $subject->class->student_count . "</td>";
+                $output .= "<td style='text-align: center'>" . $subject->phase1_avg . "% </td>";
+            }
+            if(config("buttons.phase_two_report")==="enable") {
+                $output .= "<td style='text-align: center'>" . $subject->phase2_student_count . " / " . $subject->class->student_count . "</td>";
+                $output .= "<td style='text-align: center'>" . $subject->phase2_avg . "% </td>";
+            }
+            if(config("buttons.phase_one_report")==="enable" &&
+                config("buttons.phase_two_report")==="enable") {
+                $output .= "<td>" . (($subject->phase1_avg + $subject->phase2_avg) / 2) . "% </td>";
+            }
             $output.="</tr>";
         }
         echo $output;
@@ -375,13 +404,13 @@ return response()->json($obj);
                     ->where('phase', '=', 1)
                     ->avg('sum');
                 if ($p1_avg == NULL) $p1_avg = 0;
-                $f['phase1_avg'] = $p1_avg;
+                $f['phase1_avg'] = round($p1_avg);
 
                 $p2_avg = Feedback::where('sa_id', '=', $f->pivot->id)
                     ->where('phase', '=', 2)
                     ->avg('sum');
                 if ($p2_avg == NULL) $p2_avg = 0;
-                $f['phase2_avg'] = $p2_avg;
+                $f['phase2_avg'] = round($p2_avg);
 
                 $s1_count = Feedback::where('sa_id', '=', $f->pivot->id)
                     ->where('phase', '=', 1)->count();

@@ -10,9 +10,16 @@
             <th  class=' text-capitalize text-dark info'>SEM </th>
             <th class='text-capitalize text-dark info' >BATCH </th>
             <th  class='text-capitalize text-dark info'>SUBJECT NAME </th>
+            @if(config("buttons.phase_one_report")==="enable")
             <th class='text-capitalize text-dark info' > PHASE I</th>
+            @endif
+            @if(config("buttons.phase_two_report")==="enable")
             <th  class='text-capitalize text-dark info'> PHASE II </th>
+            @endif
+            @if(config("buttons.phase_one_report")==="enable" &&
+            config("buttons.phase_two_report")==="enable")
             <th  class='text-capitalize text-dark info'> AVG </th>
+                @endif
 
         </tr>
         @foreach($faculties as $index=>$faculty)
@@ -35,9 +42,16 @@
                         @endif
 
                 <td>{{$subject->name}}</td>
-                <td>{{$subject->phase1_avg}}</td>
-                    <td>{{$subject->phase2_avg}}</td>
-                <td>{{(($subject->phase1_avg+$subject->phase2_avg)/2)}}</td>
+                        @if(config("buttons.phase_one_report")==="enable")
+                <td>{{$subject->phase1_avg}}%</td>
+                        @endif
+                        @if(config("buttons.phase_two_report")==="enable")
+                    <td>{{$subject->phase2_avg}}%</td>
+                        @endif
+                        @if(config("buttons.phase_one_report")==="enable" &&
+                        config("buttons.phase_two_report")==="enable")
+                <td>{{(($subject->phase1_avg+$subject->phase2_avg)/2)}}%</td>
+                            @endif
             </tr>
             @endforeach
             @endforeach
